@@ -23,6 +23,12 @@
     <ClCompile Include="App\TextureLoader.cpp">
       <Filter>API</Filter>
     </ClCompile>
+    <ClCompile Include="App\Actor.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Vec2.cpp">
+      <Filter>API\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\app.h">
@@ -52,6 +58,15 @@
     <ClInclude Include="App\TextureLoader.h">
       <Filter>API</Filter>
     </ClInclude>
+    <ClInclude Include="App\Actor.h">
+      <Filter>API</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Math.h">
+      <Filter>API\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Vec2.h">
+      <Filter>API\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -59,6 +74,9 @@
   <ItemGroup>
     <Filter Include="API">
       <UniqueIdentifier>{3e1485bf-3449-4966-8760-976ee866544b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\Math">
+      <UniqueIdentifier>{7483c878-4ad9-4f85-bcae-28b48c9da404}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

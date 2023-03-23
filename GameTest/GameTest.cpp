@@ -12,8 +12,9 @@
 //------------------------------------------------------------------------
 // Eample data....
 //------------------------------------------------------------------------
-CSimpleSprite *testSprite;
-CSimpleSprite *testSprite2;
+CActor *player;
+CSimpleSprite * ship;
+CSimpleSprite *sheep;
 enum
 {
 	ANIM_FORWARDS,
@@ -31,20 +32,22 @@ void Init()
 	//------------------------------------------------------------------------
 	// Example Sprite Code....
 	
+	player = App::CreateActor(CVec2(400.0f, 400.0f));
+	CSimpleSprite* player_sprite = App::CreateSprite(".\\TestData\\rainbow.bmp", 7, 1);
+	player->SetSprite(player_sprite);
+	//float speed = 1.0f / 15.0f;
+	//player->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6});
+	//testSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
+	//testSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
+	//testSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
+	player->GetSprite()->SetFrame(2);
+	player->GetSprite()->SetScale(1.0f);
 
-	testSprite = App::CreateSprite(".\\TestData\\Test.bmp", 8, 4);
-	testSprite->SetPosition(400.0f, 400.0f);
-	float speed = 1.0f / 15.0f;
-	testSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
-	testSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
-	testSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
-	testSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
-	testSprite->SetScale(2.0f);
+	sheep = App::CreateSprite(".\\TestData\\rainbow.bmp", 7, 1);
+	sheep->SetFrame(2);
+	sheep->SetPosition(100.0f, 200.0f);
+	sheep->SetScale(1.0f);
 
-	testSprite2 = App::CreateSprite(".\\TestData\\Ships.bmp", 2, 12);
-	testSprite2->SetPosition(400.0f, 400.0f);	
-	testSprite2->SetFrame(2);
-	testSprite2->SetScale(1.0f);
 	//------------------------------------------------------------------------
 }
 
@@ -54,66 +57,77 @@ void Init()
 //------------------------------------------------------------------------
 void Update(float deltaTime)
 {
+
+	if (App::AABBIntersects(player->GetSprite(), sheep)) {
+		sheep->SetFrame(4);
+	}
+	else {
+		sheep->SetFrame(2);
+	}
 	//------------------------------------------------------------------------
 	// Example Sprite Code....
-	testSprite->Update(deltaTime);
-	testSprite2->Update(deltaTime);
+
+	//testSprite2->Update(deltaTime);
 	if (App::GetController().GetLeftThumbStickX() > 0.5f)
 	{
-		testSprite->SetAnimation(ANIM_RIGHT);
+		//player->SetAnimation(ANIM_BACKWARDS);
 		float x, y;
-		testSprite->GetPosition(x, y);
+		player->GetSprite()->GetPosition(x, y);
 		x += 1.0f;
-		testSprite->SetPosition(x, y);
+		player->GetSprite()->SetPosition(x, y);
+		
 	}
 	if (App::GetController().GetLeftThumbStickX() < -0.5f)
 	{
-		testSprite->SetAnimation(ANIM_LEFT);
+		//player->SetAnimation(ANIM_BACKWARDS);
 		float x, y;
-		testSprite->GetPosition(x, y);
+		player->GetSprite()->GetPosition(x, y);
 		x -= 1.0f;
-		testSprite->SetPosition(x, y);
+		player->GetSprite()->SetPosition(x, y);
 	}
 	if (App::GetController().GetLeftThumbStickY() > 0.5f)
 	{
-		testSprite->SetAnimation(ANIM_FORWARDS);
+		//player->SetAnimation(ANIM_BACKWARDS);
 		float x, y;
-		testSprite->GetPosition(x, y);
+		player->GetSprite()->GetPosition(x, y);
 		y += 1.0f;
-		testSprite->SetPosition(x, y);
+		player->GetSprite()->SetPosition(x, y);
 	}
 	if (App::GetController().GetLeftThumbStickY() < -0.5f)
 	{
-		testSprite->SetAnimation(ANIM_BACKWARDS);
+		//player->SetAnimation(ANIM_BACKWARDS);
 		float x, y;
-		testSprite->GetPosition(x, y);
+		player->GetSprite()->GetPosition(x, y);
 		y -= 1.0f;
-		testSprite->SetPosition(x, y);
+		player->GetSprite()->SetPosition(x, y);
 	}
-	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_UP, false))
+
+	sheep->Update(deltaTime);
+	player->Update(deltaTime);
+	/*if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_UP, false))
 	{
-		testSprite->SetScale(testSprite->GetScale() + 0.1f);
+		player->SetScale(player->GetScale() + 0.1f);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_DOWN, false))
 	{
-		testSprite->SetScale(testSprite->GetScale() - 0.1f);
+		player->SetScale(player->GetScale() - 0.1f);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_LEFT, false))
 	{
-		testSprite->SetAngle(testSprite->GetAngle() + 0.1f);
+		player->SetAngle(player->GetAngle() + 0.1f);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_RIGHT, false))
 	{
-		testSprite->SetAngle(testSprite->GetAngle() - 0.1f);
+		player->SetAngle(player->GetAngle() - 0.1f);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_A, true))
 	{
-		testSprite->SetAnimation(-1);
+		player->SetAnimation(-1);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_B, true))
 	{
-		testSprite->SetVertex(0, testSprite->GetVertex(0) + 5.0f);
-	}
+		player->SetVertex(0, player->GetVertex(0) + 5.0f);
+	}*/
 	//------------------------------------------------------------------------
 	// Sample Sound.
 	//------------------------------------------------------------------------
@@ -133,33 +147,38 @@ void Render()
 	//------------------------------------------------------------------------
 	// Example Line Drawing.
 	//------------------------------------------------------------------------
-	static float a = 0.0f;
-	float r = 1.0f;
-	float g = 1.0f;
-	float b = 1.0f;
-	a += 0.1f;
-	for (int i = 0; i < 20; i++)
-	{
+	//static float a = 0.0f;
+	//float r = 1.0f;
+	//float g = 1.0f;
+	//float b = 1.0f;
+	//a += 0.1f;
+	//for (int i = 0; i < 20; i++)
+	//{
 
-		float sx = 200 + sinf(a + i * 0.1f)*60.0f;
-		float sy = 200 + cosf(a + i * 0.1f)*60.0f;
-		float ex = 700 - sinf(a + i * 0.1f)*60.0f;
-		float ey = 700 - cosf(a + i * 0.1f)*60.0f;
-		g = (float)i / 20.0f;
-		b = (float)i / 20.0f;
-		App::DrawLine(sx, sy, ex, ey,r,g,b);
-	}
+	//	float sx = 200 + sinf(a + i * 0.1f)*60.0f;
+	//	float sy = 200 + cosf(a + i * 0.1f)*60.0f;
+	//	float ex = 700 - sinf(a + i * 0.1f)*60.0f;
+	//	float ey = 700 - cosf(a + i * 0.1f)*60.0f;
+	//	g = (float)i / 20.0f;
+	//	b = (float)i / 20.0f;
+	//	App::DrawLine(sx, sy, ex, ey,r,g,b);
+	//}
 
 	//------------------------------------------------------------------------
-	// Example Sprite Code....
-	testSprite->Draw();
-	testSprite2->Draw();
+	// Bounding Box Debug Draw
+	player->Draw();
+	App::DrawBoundingBox(player->GetSprite());
+
+	sheep->Draw();
+	App::DrawBoundingBox(sheep);
+
+
 	//------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------
 	// Example Text.
 	//------------------------------------------------------------------------
-	App::Print(100, 100, "Sample Text");
+	//App::Print(100, 100, "Sample Text");
 
 }
 //------------------------------------------------------------------------
@@ -170,7 +189,8 @@ void Shutdown()
 {	
 	//------------------------------------------------------------------------
 	// Example Sprite Code....
-	delete testSprite;
-	delete testSprite2;
+	delete player;
+	delete sheep;
+	//delete testSprite2;
 	//------------------------------------------------------------------------
 }
