@@ -10,6 +10,7 @@
 #include "AppSettings.h"
 #include "SimpleController.h"
 #include "SimpleSprite.h"
+#include "Actor.h"
 
 #define APP_VIRTUAL_TO_NATIVE_COORDS(_x_,_y_)			_x_ = ((_x_ / APP_VIRTUAL_WIDTH )*2.0f) - 1.0f; _y_ = ((_y_ / APP_VIRTUAL_HEIGHT)*2.0f) - 1.0f;
 #define APP_NATIVE_TO_VIRTUAL_COORDS(_x_,_y_)			_x_ = ((_x_ + 1.0f) * APP_VIRTUAL_WIDTH) / 2.0f; _y_ = ((_y_ + 1.0f) * APP_VIRTUAL_HEIGHT) / 2.0f;
@@ -50,6 +51,8 @@ namespace App
 	//-------------------------------------------------------------------------------------------
 	CSimpleSprite *CreateSprite(const char *fileName, int columns, int rows);
 		
+
+	CActor* CreateActor(CVec2 position);
 	//*******************************************************************************************
 	// Sound handling.	
 	//*******************************************************************************************
@@ -107,5 +110,8 @@ namespace App
 	// See SimpleController.h for more info.
 	//-------------------------------------------------------------------------------------------
 	const CController &GetController( int pad = 0 );
+
+	bool AABBIntersects(CSimpleSprite* a, CSimpleSprite* b);
+	void DrawBoundingBox(CSimpleSprite* sprite);
 };
 #endif //_APP_H

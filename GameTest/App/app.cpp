@@ -23,15 +23,22 @@ namespace App
 		APP_VIRTUAL_TO_NATIVE_COORDS(ex, ey);
 #endif
 		glBegin(GL_LINES);
+
 		glColor3f(r, g, b); // Yellow
 		glVertex2f(sx, sy);
 		glVertex2f(ex, ey);
+
 		glEnd();
 	}
 	
 	CSimpleSprite *CreateSprite(const char *fileName, int columns, int rows)
 	{
 		return new CSimpleSprite(fileName, columns, rows);
+	}
+
+	CActor* CreateActor(CVec2 position)
+	{
+		return new CActor(position);
 	}
 
 	bool IsKeyPressed(int key)
@@ -85,4 +92,53 @@ namespace App
 	{
 		return CSimpleControllers::GetInstance().GetController(pad);
 	}
+	bool AABBIntersects(CSimpleSprite* a, CSimpleSprite* b)
+	{
+
+		float aScale = a->GetScale();
+
+		float aMinX;
+		float aMinY;
+		a->GetPosition(aMinX, aMinY);
+
+		aMinX = (aMinX - ((a->GetWidth() / 4.0f) * aScale));
+		aMinY = (aMinY - ((a->GetHeight() / 4.0f) * aScale));
+		float aMaxX = (aMinX + ((a->GetWidth() / 2.0f) * aScale));
+		float aMaxY = (aMinY + ((a->GetHeight() / 2.0f) * aScale));
+
+
+		float bScale = b->GetScale();
+		float bMinX;
+		float bMinY;
+		b->GetPosition(bMinX, bMinY);
+
+		bMinX = (bMinX - ((b->GetWidth() / 4.0f) * bScale));
+		bMinY = (bMinY - ((b->GetHeight() / 4.0f) * bScale));
+		float bMaxX = (bMinX + ((a->GetWidth() / 2.0f) * bScale));
+		float bMaxY = (bMinY + ((a->GetHeight() / 2.0f) * bScale));
+
+		return !( aMinX > bMaxX || aMaxX < bMinX || aMinY > bMaxY || aMaxY < bMinY );
+	}
+	void DrawBoundingBox(CSimpleSprite* sprite)
+	{
+		float scale = sprite->GetScale();
+		float angle = sprite->GetAngle();
+		angle = angle * 180 / PI;
+		float aMinX;
+		float aMinY;
+		sprite->GetPosition(aMinX, aMinY);
+
+		aMinX = (aMinX - ((sprite->GetWidth() / 4.0f) * scale));
+		aMinY = (aMinY - ((sprite->GetHeight() / 4.0f) * scale));
+		float aMaxX = (aMinX + ((sprite->GetWidth() / 2.0f) * scale));
+		float aMaxY = (aMinY + ((sprite->GetHeight() / 2.0f) * scale));
+
+		App::DrawLine(aMinX, aMinY, aMaxX, aMinY, angle, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMinY, aMinX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMaxX, aMinY, aMaxX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMaxY, aMaxX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
+
+	}
+
+
 }
