@@ -133,10 +133,10 @@ namespace App
 		float aMaxX = (aMinX + ((sprite->GetWidth() / 2.0f) * scale));
 		float aMaxY = (aMinY + ((sprite->GetHeight() / 2.0f) * scale));
 
-		App::DrawLine(aMinX, aMinY, aMaxX, aMinY, angle, 1.0f, 0.0f, 0.0f);
-		App::DrawLine(aMinX, aMinY, aMinX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
-		App::DrawLine(aMaxX, aMinY, aMaxX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
-		App::DrawLine(aMinX, aMaxY, aMaxX, aMaxY, angle, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMinY, aMaxX, aMinY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMinY, aMinX, aMaxY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMaxX, aMinY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMaxY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
 
 	}
 
