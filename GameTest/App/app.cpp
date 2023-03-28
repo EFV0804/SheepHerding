@@ -11,6 +11,7 @@
 #include "SimpleController.h"
 #include "SimpleSprite.h"
 
+
 //---------------------------------------------------------------------------------
 // Utils and externals for system info.
 
@@ -92,30 +93,32 @@ namespace App
 	{
 		return CSimpleControllers::GetInstance().GetController(pad);
 	}
-	bool AABBIntersects(CSimpleSprite* a, CSimpleSprite* b)
+	bool AABBIntersects(CBoundingBoxComponent* a, CBoundingBoxComponent* b)
 	{
 
 		float aScale = a->GetScale();
 
-		float aMinX;
-		float aMinY;
-		a->GetPosition(aMinX, aMinY);
+		CVec2 positionA = a->GetPosition();
+		float aMinX = positionA.m_x;
+		float aMinY = positionA.m_y;
 
-		aMinX = (aMinX - ((a->GetWidth() / 4.0f) * aScale));
-		aMinY = (aMinY - ((a->GetHeight() / 4.0f) * aScale));
-		float aMaxX = (aMinX + ((a->GetWidth() / 2.0f) * aScale));
-		float aMaxY = (aMinY + ((a->GetHeight() / 2.0f) * aScale));
+		//a->GetPosition(aMinX, aMinY);
+
+		aMinX = (aMinX - ((a->GetSize().m_x / 4.0f) * aScale));
+		aMinY = (aMinY - ((a->GetSize().m_y / 4.0f) * aScale));
+		float aMaxX = (aMinX + ((a->GetSize().m_x / 2.0f) * aScale));
+		float aMaxY = (aMinY + ((a->GetSize().m_y / 2.0f) * aScale));
 
 
 		float bScale = b->GetScale();
-		float bMinX;
-		float bMinY;
-		b->GetPosition(bMinX, bMinY);
+		CVec2 positionB = b->GetPosition();
+		float bMinX = positionB.m_x;
+		float bMinY = positionB.m_y;
 
-		bMinX = (bMinX - ((b->GetWidth() / 4.0f) * bScale));
-		bMinY = (bMinY - ((b->GetHeight() / 4.0f) * bScale));
-		float bMaxX = (bMinX + ((a->GetWidth() / 2.0f) * bScale));
-		float bMaxY = (bMinY + ((a->GetHeight() / 2.0f) * bScale));
+		bMinX = (bMinX - ((b->GetSize().m_x / 4.0f) * bScale));
+		bMinY = (bMinY - ((b->GetSize().m_y / 4.0f) * bScale));
+		float bMaxX = (bMinX + ((b->GetSize().m_x / 2.0f) * bScale));
+		float bMaxY = (bMinY + ((b->GetSize().m_y / 2.0f) * bScale));
 
 		return !( aMinX > bMaxX || aMaxX < bMinX || aMinY > bMaxY || aMaxY < bMinY );
 	}
