@@ -2,14 +2,14 @@
 #include "Vec2.h"
 #include "Math.h"
 
-float CVec2::length() const
+float CVec2::Length() const
 {
 	return Math::sqrt(m_x*m_x+m_y*m_y);
 }
 
-void CVec2::normalise()
+void CVec2::Normalised()
 {
-	float length = this->length();
-	m_x /= length;
-	m_y /= length;
+	float Length = this->Length();
+	m_x /= Length;
+	m_y /= Length;
 }

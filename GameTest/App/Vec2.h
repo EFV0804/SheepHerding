@@ -7,20 +7,18 @@ public:
 	CVec2() = delete;
 	CVec2(float x, float y) : m_x{ x }, m_y{ y } { };
 
-	void GetComponents(float& m_x, float& m_y) { m_x = m_x; m_y = m_y; }
-	void SetComponents(float m_x, float m_y) { m_x = m_x; m_y = m_y; }
-	float GetX() const { return m_x; }
-	float GetY() const { return m_y; }
-	void SetX(float x) { m_x = x; }
-	void SetY(float y) { m_y = y; }
-	
-	float length() const;
-	void normalise();
+	float m_x{ 0 };
+	float m_y{ 0 };
 
-	static CVec2 normalise(const CVec2& vec)
+
+	void Set(float x, float y) { m_x = x, m_y = y; }
+	float Length() const;
+	void Normalised();
+
+	static CVec2 Normalised(const CVec2& vec)
 	{
 		CVec2 temp = vec;
-		temp.normalise();
+		temp.Normalised();
 		return temp;
 	}
 
@@ -74,11 +72,6 @@ public:
 	{
 		return CVec2(vec.m_x * scalar, vec.m_y * scalar);
 	}
-
-private:
-
-	float m_x{ 0 };
-	float m_y{ 0 };
 
 };
 
