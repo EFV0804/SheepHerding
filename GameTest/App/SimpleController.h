@@ -18,9 +18,9 @@ public:
 	CController() : m_lastButtons(0), m_debouncedButtons(0), m_bConnected(false)
 	{
 		ZeroMemory(&m_state, sizeof(XINPUT_STATE));
-	}	
+	}
 
-	bool CheckButton(int button, bool onPress = true ) const
+	bool CheckButton(int button, bool onPress = true) const
 	{
 		if (onPress)
 		{
@@ -66,9 +66,9 @@ protected:
 class CSimpleControllers
 {
 public:
-	static CSimpleControllers &GetInstance();
+	static CSimpleControllers& GetInstance();
 	void Update();
-	const CController &GetController(int pad = 0)
+	const CController& GetController(int pad = 0)
 	{
 		if (pad >= MAX_CONTROLLERS) pad = 0;
 		return m_Controllers[pad];

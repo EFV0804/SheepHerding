@@ -14,7 +14,6 @@ public:
     void DrawBoundingBox();
 
 private:
-    CSpriteComponent* m_sprite;
-    CBoundingBoxComponent* m_bb;
-
+    CSpriteComponent* m_sprite = nullptr;
+    CBoundingBoxComponent* m_bb = nullptr;
 };

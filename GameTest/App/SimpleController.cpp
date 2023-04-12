@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------
 // Singleton
 //-----------------------------------------------------------------------------
-CSimpleControllers &CSimpleControllers::GetInstance()
+CSimpleControllers& CSimpleControllers::GetInstance()
 {
 	static CSimpleControllers theControllers;
 	return theControllers;
@@ -34,24 +34,24 @@ CSimpleControllers &CSimpleControllers::GetInstance()
 //-----------------------------------------------------------------------------
 void CSimpleControllers::Update()
 {
-    DWORD dwResult;
+	DWORD dwResult;
 	int numControllers = 0;
-    for( DWORD i = 0; i < MAX_CONTROLLERS; i++ )
-    {
-        // Simply get the state of the controller from XInput.
-        dwResult = XInputGetState( i, &m_Controllers[i].m_state );
+	for (DWORD i = 0; i < MAX_CONTROLLERS; i++)
+	{
+		// Simply get the state of the controller from XInput.
+		dwResult = XInputGetState(i, &m_Controllers[i].m_state);
 
 		if (dwResult == ERROR_SUCCESS)
 		{
 			m_Controllers[i].m_bConnected = true;
 			numControllers++;
 		}
-        else
-            m_Controllers[i].m_bConnected = false;
-    }
-	
+		else
+			m_Controllers[i].m_bConnected = false;
+	}
+
 	// No controllers so lets fake one using keyboard defines.
-	if (numControllers == 0 )
+	if (numControllers == 0)
 	{
 		m_Controllers[0].m_bConnected = true;
 		WORD buttons = 0;
@@ -60,7 +60,7 @@ void CSimpleControllers::Update()
 		m_Controllers[0].m_state.Gamepad.sThumbRX = 0;
 		m_Controllers[0].m_state.Gamepad.sThumbRY = 0;
 		m_Controllers[0].m_state.Gamepad.bLeftTrigger = 0;
-		m_Controllers[0].m_state.Gamepad.bRightTrigger = 0;		
+		m_Controllers[0].m_state.Gamepad.bRightTrigger = 0;
 
 		if (App::IsKeyPressed(APP_PAD_EMUL_LEFT_THUMB_LEFT)) m_Controllers[0].m_state.Gamepad.sThumbLX = -32767;
 		if (App::IsKeyPressed(APP_PAD_EMUL_LEFT_THUMB_RIGHT)) m_Controllers[0].m_state.Gamepad.sThumbLX = 32767;
@@ -68,7 +68,7 @@ void CSimpleControllers::Update()
 		if (App::IsKeyPressed(APP_PAD_EMUL_LEFT_THUMB_DOWN)) m_Controllers[0].m_state.Gamepad.sThumbLY = 32767;
 		if (App::IsKeyPressed(APP_PAD_EMUL_BUTTON_ALT_A)) buttons |= XINPUT_GAMEPAD_A;
 		if (App::IsKeyPressed(APP_PAD_EMUL_START)) buttons |= XINPUT_GAMEPAD_START;
-		
+
 		if (App::IsKeyPressed(APP_PAD_EMUL_RIGHT_THUMB_LEFT)) m_Controllers[0].m_state.Gamepad.sThumbRX = -32767;
 		if (App::IsKeyPressed(APP_PAD_EMUL_RIGHT_THUMB_RIGHT)) m_Controllers[0].m_state.Gamepad.sThumbRX = 32767;
 		if (App::IsKeyPressed(APP_PAD_EMUL_RIGHT_THUMB_UP)) m_Controllers[0].m_state.Gamepad.sThumbRY = -32767;
@@ -102,7 +102,7 @@ void CSimpleControllers::Update()
 		if (m_Controllers[i].m_bConnected)
 		{
 #ifdef UPDATE_DZONE					
-			m_Controllers[i].m_debouncedButtons = ~m_Controllers[i].m_lastButtons &m_Controllers[i].m_state.Gamepad.wButtons;
+			m_Controllers[i].m_debouncedButtons = ~m_Controllers[i].m_lastButtons & m_Controllers[i].m_state.Gamepad.wButtons;
 			m_Controllers[i].m_lastButtons = m_Controllers[i].m_state.Gamepad.wButtons;
 
 			// Zero value if thumbsticks are within the dead zone 

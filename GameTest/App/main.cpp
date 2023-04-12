@@ -22,7 +22,7 @@ int WINDOW_HEIGHT = APP_INIT_WINDOW_HEIGHT;
 HWND MAIN_WINDOW_HANDLE = nullptr;
 
 //---------------------------------------------------------------------------------
-static const double UPDATE_MAX = ((1.0 / APP_MAX_FRAME_RATE)*1000.0);
+static const double UPDATE_MAX = ((1.0 / APP_MAX_FRAME_RATE) * 1000.0);
 //---------------------------------------------------------------------------------
 // Internal globals for timing.
 double gPCFreq = 0.0;
@@ -62,24 +62,24 @@ class CProfiler
 {
 public:
 	CProfiler() : m_startTime(0), m_elapsedTime(0)
-	{		
+	{
 	}
 	void Start()
 	{
 		m_startTime = GetCounter();
 	}
 	double Stop()
-	{ 
+	{
 		m_elapsedTime = GetCounter() - m_startTime;
 		return m_elapsedTime;
 	}
-	void Print(float x, float y, const char *text)
+	void Print(float x, float y, const char* text)
 	{
 		char textBuffer[64];
-		sprintf(textBuffer, "%s: %0.4f ms", text,m_elapsedTime);
-		App::Print(x, y, textBuffer,1.0f,0.0f,1.0f, GLUT_BITMAP_HELVETICA_10);
+		sprintf(textBuffer, "%s: %0.4f ms", text, m_elapsedTime);
+		App::Print(x, y, textBuffer, 1.0f, 0.0f, 1.0f, GLUT_BITMAP_HELVETICA_10);
 	}
-private:	
+private:
 	double m_startTime;
 	double m_elapsedTime;
 };
@@ -106,12 +106,12 @@ void Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);   // Clear the color buffer with current clearing color
 
-	gUserRenderProfiler.Start();	
+	gUserRenderProfiler.Start();
 	Render();						// Call user defined render.
 	gUserRenderProfiler.Stop();
 	if (gRenderUpdateTimes)
 	{
-		gUpdateDeltaTime.Print	 (10, 40, "Update");
+		gUpdateDeltaTime.Print(10, 40, "Update");
 		gUserRenderProfiler.Print(10, 25, "User Render");
 		gUserUpdateProfiler.Print(10, 10, "User Update");
 	}
@@ -122,14 +122,14 @@ void Display()
 // Update from glut. Called when no more event handling.
 //---------------------------------------------------------------------------------
 void Idle()
-{	
+{
 	static double prevTime = GetCounter();
 	double tick = GetCounter() - prevTime;
 	double currentTime = GetCounter();
 	double deltaTime = currentTime - gLastTime;
 	// Update.\\ubisoft.org\Projects\Tetra\TOR\Versions\PACKAGES\Durango\TOR-TETRA-STREAM-MAIN-971.2\TEST_profile\MSXC
 	if (deltaTime > (UPDATE_MAX))
-	{	
+	{
 		gUpdateDeltaTime.Stop();
 		glutPostRedisplay(); //everytime you are done 
 		CSimpleControllers::GetInstance().Update();
@@ -137,27 +137,27 @@ void Idle()
 		gUserUpdateProfiler.Start();
 		Update((float)deltaTime);				// Call user defined update.
 		gUserUpdateProfiler.Stop();
-		
-		gLastTime = currentTime;		
+
+		gLastTime = currentTime;
 		RECT tileClientArea;
-		if (GetClientRect( MAIN_WINDOW_HANDLE, &tileClientArea))
+		if (GetClientRect(MAIN_WINDOW_HANDLE, &tileClientArea))
 		{
 			WINDOW_WIDTH = tileClientArea.right - tileClientArea.left;
 			WINDOW_HEIGHT = tileClientArea.bottom - tileClientArea.top;
 		}
 
-		if (App::GetController().CheckButton(APP_ENABLE_DEBUG_INFO_BUTTON) )
+		if (App::GetController().CheckButton(APP_ENABLE_DEBUG_INFO_BUTTON))
 		{
 			gRenderUpdateTimes = !gRenderUpdateTimes;
 		}
 
 		if (App::IsKeyPressed(APP_QUIT_KEY))
-		{		
+		{
 			exit(0);
 		}
 		gUpdateDeltaTime.Start();
 	}
-	
+
 }
 
 // Break here and use the diagnostics debug view to check for user mem leaks.
@@ -167,8 +167,8 @@ void CheckMemCallback()
 
 
 //---------------------------------------------------------------------------------
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstance,	_In_ LPWSTR    lpCmdLine, _In_ int       nCmdShow)
-{	
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR    lpCmdLine, _In_ int       nCmdShow)
+{
 	int argc = 0;	char* argv = "";
 
 	// Exit handler to check memory on exit.
@@ -178,7 +178,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 	glutInit(&argc, &argv);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(100, 100);
-	int glutWind = glutCreateWindow(APP_WINDOW_TITLE);	
+	int glutWind = glutCreateWindow(APP_WINDOW_TITLE);
 	HDC dc = wglGetCurrentDC();
 	MAIN_WINDOW_HANDLE = WindowFromDC(dc);
 	glutIdleFunc(Idle);
@@ -190,15 +190,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 
 	// Init sounds system.
 	CSimpleSound::GetInstance().Initialize(MAIN_WINDOW_HANDLE);
-	
+
 	// Call user defined init.
 	Init();
 
 	// Enter glut the event-processing loop				
 	glutMainLoop();
-	
+
 	// Call user shutdown.
-	Shutdown();	
+	Shutdown();
 
 	// Shutdown sound system.
 	CSimpleSound::GetInstance().Shutdown();

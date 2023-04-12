@@ -4,26 +4,34 @@
 #include "app.h"
 #include "TileMap.h"
 
+
 void CGame::Init()
 {
 	CTileMap tileMap{};
 	tileMap.Load();
-	CPlayerActor* player = new CPlayerActor(CVec2(600.0f, 600.0f));
-	CSheepActor* sheep = new CSheepActor(CVec2(100.0f, 100.0f));
+	CPlayerActor* player = new CPlayerActor(CVec2(500.0f, 400.0f));
+	player->SetForce(200.0f);
+
+	m_physics = CPhysicsManager();
+	m_physics.AddBody(player->GetBoundingBox());
+
+	m_herd.MakeHerd(5);
+	for (auto sheep : m_herd.GetHerd()) {
+		m_physics.AddBody(sheep->GetBoundingBox());
+	}
+}
+
+void CGame::PreUpdate(float deltaTime)
+{
+	m_physics.Update(deltaTime);
 }
 
 void CGame::Update(float deltaTime)
 {
-	//if (App::AABBIntersects(player->GetBoundingBox(), sheep->GetBoundingBox())) {
-	//	App::PlaySound(".\\TestData\\Test.wav");
-	//}
-	//else {
-
-	//}
-
 	for (auto actor : m_actors) {
 		actor->Update(deltaTime);
 	}
+	m_herd.Update(deltaTime);
 
 }
 

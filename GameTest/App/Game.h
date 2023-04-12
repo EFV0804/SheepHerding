@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "PlayerActor.h"
 #include "SheepActor.h"
+#include "PhysicsManager.h"
+#include "HerdManager.h"
 
 class CGame {
 public:
@@ -16,6 +18,7 @@ public:
 	}
 
 	void Init();
+	void PreUpdate(float deltaTime);
 	void Update(float deltaTime);
 	void Render();
 	void Shutdown();
@@ -25,4 +28,6 @@ public:
 
 private:
 	std::vector<CActor*> m_actors;
+	CPhysicsManager m_physics;
+	CHerdManager m_herd;
 };

@@ -5,9 +5,9 @@
 CPlayerActor::CPlayerActor(CVec2 position): CActor(position)
 {
 	m_sprite = new CSpriteComponent(this, 10, ".\\TestData\\dog.bmp", 1, 1);
-	m_bb = new CBoundingBoxComponent(this, 10, CVec2(200.0f,200.0f));
+	m_bb = new CBoundingBoxComponent(this, 10, CVec2(128.0f,128.0f));
 	m_inputs = new CInputComponent(this, 10);
-	m_inputs->SetSpeed(10.0f);
+	m_inputs->SetSpeed(8.0f);
 }
 
 void CPlayerActor::Render()
@@ -28,5 +28,5 @@ void CPlayerActor::DrawBoundingBox()
 
 void CPlayerActor::UpdateActor(float deltaTime)
 {
-	m_inputs->Update();
+	m_inputs->Update(deltaTime);
 }

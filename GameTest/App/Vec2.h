@@ -9,6 +9,7 @@ public:
 
 	float m_x{ 0 };
 	float m_y{ 0 };
+	int m_size = 2;
 
 
 	void Set(float x, float y) { m_x = x, m_y = y; }
@@ -73,6 +74,21 @@ public:
 		return CVec2(vec.m_x * scalar, vec.m_y * scalar);
 	}
 
+	friend CVec2 operator*(const CVec2 a, CVec2 b) {
+		return CVec2(a.m_x * b.m_x, a.m_y * b.m_y);
+	}
+	
+	float &operator[](int index) {
+		if (index > m_size) {
+			return m_x;
+		}
+		if (index == 0) {
+			return m_x;
+		}
+		if (index == 1) {
+			return m_y;
+		}
+	}
 };
 
 #endif //_VEC2_H

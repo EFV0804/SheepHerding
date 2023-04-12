@@ -9,5 +9,5 @@ public:
 	CTileActor(CVec2 position, int frame);
 
 private:
-	CSpriteComponent* m_sprite;
+	CSpriteComponent* m_sprite = nullptr;
 };

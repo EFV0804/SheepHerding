@@ -14,12 +14,12 @@ public:
     CInputComponent() = delete;
     CInputComponent& operator=(const CInputComponent&) = delete;
 
-    void Update();
+    void Update(float deltaTime);
 
     const float GetSpeed() const { return m_speed; }
     void SetSpeed(float speed) { m_speed = speed; }
 
 private:
-    float m_speed{ 1.0f };
+    float m_speed{ 0.02f };
     const CController& m_controller;
 };

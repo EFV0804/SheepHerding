@@ -32,7 +32,7 @@ public:
 
 private:
     CVec2 m_position{ 0.0f,0.0f };
-    const char* m_fileName;
+    const char* m_fileName = nullptr;
     std::unique_ptr<CSimpleSprite> m_sprite;
     unsigned int m_nColumns;
     unsigned int m_nRows;

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="GameTest.cpp" />
+    <ClCompile Include="SheepHerding.cpp" />
     <ClCompile Include="App\app.cpp">
       <Filter>API</Filter>
     </ClCompile>
@@ -24,10 +24,43 @@
       <Filter>API</Filter>
     </ClCompile>
     <ClCompile Include="App\Actor.cpp">
-      <Filter>API</Filter>
+      <Filter>API\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="App\PlayerActor.cpp">
+      <Filter>API\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="App\SheepActor.cpp">
+      <Filter>API\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="App\TileActor.cpp">
+      <Filter>API\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="App\BoundingBoxComponent.cpp">
+      <Filter>API\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Component.cpp">
+      <Filter>API\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="App\InputComponent.cpp">
+      <Filter>API\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="App\SpriteComponent.cpp">
+      <Filter>API\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Game.cpp">
+      <Filter>API\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="App\TileMap.cpp">
+      <Filter>API\Systems</Filter>
     </ClCompile>
     <ClCompile Include="App\Vec2.cpp">
       <Filter>API\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="App\PhysicsManager.cpp">
+      <Filter>API\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="App\HerdManager.cpp">
+      <Filter>API\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,13 +92,46 @@
       <Filter>API</Filter>
     </ClInclude>
     <ClInclude Include="App\Actor.h">
-      <Filter>API</Filter>
+      <Filter>API\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="App\PlayerActor.h">
+      <Filter>API\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="App\SheepActor.h">
+      <Filter>API\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="App\TileActor.h">
+      <Filter>API\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="App\BoundingBoxComponent.h">
+      <Filter>API\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Component.h">
+      <Filter>API\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="App\InputComponent.h">
+      <Filter>API\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="App\SpriteComponent.h">
+      <Filter>API\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Game.h">
+      <Filter>API\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="App\TileMap.h">
+      <Filter>API\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Vec2.h">
+      <Filter>API\Math</Filter>
     </ClInclude>
     <ClInclude Include="App\Math.h">
       <Filter>API\Math</Filter>
     </ClInclude>
-    <ClInclude Include="App\Vec2.h">
-      <Filter>API\Math</Filter>
+    <ClInclude Include="App\PhysicsManager.h">
+      <Filter>API\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="App\HerdManager.h">
+      <Filter>API\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,8 +141,17 @@
     <Filter Include="API">
       <UniqueIdentifier>{3e1485bf-3449-4966-8760-976ee866544b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="API\Actors">
+      <UniqueIdentifier>{de8f0ff8-2595-49fa-88d2-da3f7df03ffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\Components">
+      <UniqueIdentifier>{96d600e1-d5c3-42ce-a963-d6dd5002a271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\Systems">
+      <UniqueIdentifier>{3cde2af9-580a-45e7-ba34-3bb7bf187fe7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="API\Math">
-      <UniqueIdentifier>{7483c878-4ad9-4f85-bcae-28b48c9da404}</UniqueIdentifier>
+      <UniqueIdentifier>{13d8c1f7-e968-4034-96c9-392518fd20a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

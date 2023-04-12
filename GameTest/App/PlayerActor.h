@@ -2,7 +2,6 @@
 #include "Actor.h"
 #include "SpriteComponent.h"
 #include "BoundingBoxComponent.h"
-#include "CollisionComponent.h"
 #include "InputComponent.h"
 
 class CPlayerActor :
@@ -18,9 +17,8 @@ public:
     CBoundingBoxComponent* GetBoundingBox() { return m_bb; }
 
 private:
-    CSpriteComponent* m_sprite;
-    CBoundingBoxComponent* m_bb;
-    CInputComponent* m_inputs;
-    //CCollisionComponent* m_collider;
+    CSpriteComponent* m_sprite = nullptr;
+    CBoundingBoxComponent* m_bb = nullptr;
+    CInputComponent* m_inputs = nullptr;
 };
 

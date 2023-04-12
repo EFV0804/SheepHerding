@@ -20,6 +20,7 @@ void Init()
 //------------------------------------------------------------------------
 void Update(float deltaTime)
 {
+	CGame::Get().PreUpdate(deltaTime);
 	CGame::Get().Update(deltaTime);
 }
 
