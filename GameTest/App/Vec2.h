@@ -64,6 +64,13 @@ public:
 		return *this;
 	}
 
+	CVec2& operator/=(float scalar)
+	{
+		m_x /= scalar;
+		m_y /= scalar;
+		return *this;
+	}
+
 	friend CVec2 operator*(const CVec2& vec, float scalar)
 	{
 		return CVec2(vec.m_x * scalar, vec.m_y * scalar);
@@ -78,6 +85,11 @@ public:
 		return CVec2(a.m_x * b.m_x, a.m_y * b.m_y);
 	}
 	
+	friend CVec2 operator/(const CVec2& vec, float scalar)
+	{
+		return CVec2(vec.m_x / scalar, vec.m_y / scalar);
+	}
+
 	float &operator[](int index) {
 		if (index > m_size) {
 			return m_x;
