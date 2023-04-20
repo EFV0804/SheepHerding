@@ -63,4 +63,9 @@ void CActor::RemoveComponent(CComponent* component)
 	}
 }
 
+void CActor::ButtonAction(int button)
+{
+
+}
+
 

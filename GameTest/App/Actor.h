@@ -4,6 +4,7 @@
 #include "SimpleSprite.h"
 #include <memory>
 #include "Component.h"
+#include "app.h"
 
 
 class CActor
@@ -14,7 +15,7 @@ public:
 	void Update(float deltaTime);
 	virtual void UpdateActor(float deltaTime);
 	void UpdateComponents(float deltaTime);
-	void Render();
+	virtual void Render();
 
 
 	void GetPosition(CVec2& vec) { vec = m_position; }
@@ -29,6 +30,7 @@ public:
 	void AddComponent(CComponent* component);
 	void RemoveComponent(CComponent* component);
 
+	virtual void ButtonAction(int button);
 
 
 protected:

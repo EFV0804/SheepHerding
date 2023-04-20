@@ -5,25 +5,26 @@
 #include "TileMap.h"
 
 
+
 void CGame::Init()
 {
 	CTileMap tileMap{};
 	tileMap.Load();
 	CPlayerActor* player = new CPlayerActor(CVec2(500.0f, 400.0f));
-	player->SetForce(200.0f);
 
-	m_physics = CPhysicsManager();
-	m_physics.AddBody(player->GetBoundingBox());
+	CPhysicsManager::Get().AddBody(player->GetBoundingBox());
+	m_herd.SetDog(player);
 
-	m_herd.MakeHerd(5);
+	m_herd.MakeHerd(15);
 	for (auto sheep : m_herd.GetHerd()) {
-		m_physics.AddBody(sheep->GetBoundingBox());
+		CPhysicsManager::Get().AddBody(sheep->GetBoundingBox());
 	}
 }
 
 void CGame::PreUpdate(float deltaTime)
 {
-	m_physics.Update(deltaTime);
+	m_herd.Update(deltaTime);
+	CPhysicsManager::Get().Update(deltaTime);
 }
 
 void CGame::Update(float deltaTime)
@@ -31,14 +32,18 @@ void CGame::Update(float deltaTime)
 	for (auto actor : m_actors) {
 		actor->Update(deltaTime);
 	}
-	m_herd.Update(deltaTime);
-
 }
 
 void CGame::Render()
 {
 	for (auto actor : m_actors) {
-		actor->Render();
+		if (actor->GetForce() == 200) {
+			actor->Render();
+		}
+		else {
+			actor->Render();
+		}
+
 	}
 }
 

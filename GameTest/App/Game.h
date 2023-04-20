@@ -28,6 +28,5 @@ public:
 
 private:
 	std::vector<CActor*> m_actors;
-	CPhysicsManager m_physics;
 	CHerdManager m_herd;
 };

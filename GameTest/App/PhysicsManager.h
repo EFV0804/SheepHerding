@@ -16,13 +16,21 @@ struct CCompareAABB {
 class CPhysicsManager {
 public:
 	CPhysicsManager();
+	CPhysicsManager(const CPhysicsManager&) = delete;
+	CPhysicsManager& operator=(const CPhysicsManager&) = delete;
+
+	static CPhysicsManager& Get() {
+		static CPhysicsManager instance;
+		return instance;
+	}
+
 	void Update(float deltaTime);
 
 	bool AABBCollision(CBoundingBoxComponent* a, CBoundingBoxComponent* b);
+	void UpdateActorPosition(CBoundingBoxComponent* actor, CVec2& translate, float deltaTime);
 	void AddBody(CBoundingBoxComponent* bb);
 
 private:
 	std::vector<CBoundingBoxComponent*> m_bodies;
-	CCompareAABB compare;
-
+	CCompareAABB m_compare;
 };

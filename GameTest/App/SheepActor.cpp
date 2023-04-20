@@ -25,5 +25,5 @@ void CSheepActor::UpdateActor()
 
 void CSheepActor::DrawBoundingBox()
 {
-	m_bb->Render();
+	//m_bb->Render();
 }

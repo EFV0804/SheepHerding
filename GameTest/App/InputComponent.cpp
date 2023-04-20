@@ -2,6 +2,7 @@
 #include "InputComponent.h"
 #include "Vec2.h"
 #include "Actor.h"
+#include "app.h"
 
 CInputComponent::CInputComponent(CActor* owner, int updateOrder): 
 	CComponent(owner, updateOrder),
@@ -42,5 +43,8 @@ void CInputComponent::Update(float deltaTime)
 		m_owner.GetPosition(vec);
 		vec.m_y -= m_speed * (0.02 * deltaTime);
 		m_owner.SetPosition(vec);
+	}
+	if (m_controller.CheckButton(XINPUT_GAMEPAD_A, true)) {
+		m_owner.ButtonAction(XINPUT_GAMEPAD_A);
 	}
 }

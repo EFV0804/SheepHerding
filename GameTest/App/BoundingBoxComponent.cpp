@@ -5,7 +5,7 @@
 #include "app.h"
 
 CBoundingBoxComponent::CBoundingBoxComponent(CActor* owner, int updateOrder, CVec2 size):
-	CComponent(owner, updateOrder, true),
+	CComponent(owner, updateOrder, false),
 	m_size {size}
 {
 
