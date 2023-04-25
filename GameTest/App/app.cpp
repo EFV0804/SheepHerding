@@ -12,6 +12,8 @@
 #include "SimpleSprite.h"
 
 
+
+
 //---------------------------------------------------------------------------------
 // Utils and externals for system info.
 
@@ -35,11 +37,6 @@ namespace App
 	CSimpleSprite *CreateSprite(const char *fileName, int columns, int rows)
 	{
 		return new CSimpleSprite(fileName, columns, rows);
-	}
-
-	CActor* CreateActor(CVec2 position)
-	{
-		return new CActor(position);
 	}
 
 	bool IsKeyPressed(int key)
@@ -87,6 +84,7 @@ namespace App
 		for (int i = 0; i < l; i++)
 		{
 			glutBitmapCharacter(font, st[i]); // Print a character on the screen
+
 		}
 	}
 	const CController &GetController( int pad )
