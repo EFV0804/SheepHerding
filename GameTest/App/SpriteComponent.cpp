@@ -12,8 +12,13 @@ CSpriteComponent::CSpriteComponent(CActor* owner,
     m_nColumns(nColumns),
     m_nRows(nRows)
 {
-    m_sprite = std::make_unique<CSimpleSprite>(fileName, nColumns, nRows);
+    m_sprite = new CSimpleSprite(fileName, nColumns, nRows);
     m_sprite->SetFrame(0);
+}
+
+CSpriteComponent::~CSpriteComponent()
+{
+    delete m_sprite;
 }
 
 void CSpriteComponent::Update(float deltaTime)

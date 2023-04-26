@@ -14,12 +14,13 @@ public:
         unsigned int nRows = 1);
     CSpriteComponent(const CSpriteComponent&) = delete;
     CSpriteComponent() = delete;
+    ~CSpriteComponent();
     CSpriteComponent& operator=(const CSpriteComponent&) = delete;
 
     void Update(float deltaTime);
     void Render();
 
-    CSimpleSprite* GetSprite() { return m_sprite.get(); }
+    CSimpleSprite* GetSprite() { return m_sprite; }
     void SetPosition(CVec2 position) { m_position = position; }
 
     enum
@@ -33,7 +34,7 @@ public:
 private:
     CVec2 m_position{ 0.0f,0.0f };
     const char* m_fileName = nullptr;
-    std::unique_ptr<CSimpleSprite> m_sprite;
+    CSimpleSprite* m_sprite;
     unsigned int m_nColumns;
     unsigned int m_nRows;
 };

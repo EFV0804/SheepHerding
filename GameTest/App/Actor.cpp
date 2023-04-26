@@ -2,7 +2,10 @@
 #include "Actor.h"
 #include "Game.h"
 
-CActor::CActor(CVec2 position) : m_position{ position }
+CActor::CActor(CVec2 position, int order) : 
+	m_position{ position },
+	m_refPosition{ position },
+	m_updateOrder{order}
 {
 	CGame::Get().AddActor(this);
 }
@@ -41,6 +44,16 @@ void CActor::Render()
 		}
 	}
 
+}
+
+void CActor::SetPosition(CVec2& position)
+{
+	m_position = position;
+	CVec2 diff = position - m_refPosition;
+	if (diff.Length() > 10.0f) {
+		m_orientation = CVec2::Normalised(diff);
+		m_refPosition = position;
+	}
 }
 
 void CActor::AddComponent(CComponent* component)

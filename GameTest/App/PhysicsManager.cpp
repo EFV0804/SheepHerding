@@ -12,6 +12,13 @@ void CPhysicsManager::Update(float deltaTime)
 {
 }
 
+CVec2 CPhysicsManager::GetPredictedPosition(CActor* actor, CVec2& force, float deltaTime)
+{
+	CVec2 translate{ 0.0f,0.0f };
+	translate = actor->GetPosition() + force * deltaTime;
+	return translate;
+}
+
 bool CPhysicsManager::AABBCollision(CBoundingBoxComponent* a, CBoundingBoxComponent* b)
 {
 
@@ -47,6 +54,7 @@ void CPhysicsManager::UpdateActorPosition(CBoundingBoxComponent* bb, CVec2& forc
 	translate = bb->GetPosition() + force * deltaTime;
 	bb->SetPosition(translate);
 }
+
 
 void CPhysicsManager::AddBody(CBoundingBoxComponent* bb)
 {

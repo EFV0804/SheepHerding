@@ -25,7 +25,7 @@ public:
 	}
 
 	void Update(float deltaTime);
-
+	CVec2 GetPredictedPosition(CActor* actor, CVec2& force, float deltaTime);
 	bool AABBCollision(CBoundingBoxComponent* a, CBoundingBoxComponent* b);
 	void UpdateActorPosition(CBoundingBoxComponent* actor, CVec2& translate, float deltaTime);
 	void AddBody(CBoundingBoxComponent* bb);

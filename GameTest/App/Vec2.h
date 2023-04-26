@@ -15,6 +15,7 @@ public:
 	void Set(float x, float y) { m_x = x, m_y = y; }
 	float Length() const;
 	void Normalised();
+	void Rotate(float angle);
 
 	static CVec2 Normalised(const CVec2& vec)
 	{
@@ -26,6 +27,11 @@ public:
 	static float dot(const CVec2& a, const CVec2& b)
 	{
 		return a.m_x * b.m_x + a.m_y * b.m_y;
+	}
+
+	static float cross(const CVec2& a, const CVec2& b)
+	{
+		return a.m_x * b.m_y - a.m_y * b.m_x;
 	}
 
 	static CVec2 lerp(const CVec2& a, const CVec2& b, float f)

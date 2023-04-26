@@ -13,3 +13,8 @@ void CVec2::Normalised()
 	m_x /= Length;
 	m_y /= Length;
 }
+
+void CVec2::Rotate(float angle) {
+	this->m_x = this->m_x * cos(angle) - this->m_y * sin(angle);
+	this->m_y = this->m_x * sin(angle) + this->m_y * cos(angle);
+}

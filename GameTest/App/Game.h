@@ -5,6 +5,7 @@
 #include "SheepActor.h"
 #include "PhysicsManager.h"
 #include "HerdManager.h"
+#include "Timer.h"
 
 class CGame {
 public:
@@ -29,4 +30,6 @@ public:
 private:
 	std::vector<CActor*> m_actors;
 	CHerdManager m_herd;
+	CCustomTimer timer{};
+	int m_gameLoopTime{ 15 };
 };
