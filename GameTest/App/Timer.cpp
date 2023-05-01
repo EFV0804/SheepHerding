@@ -1,17 +1,21 @@
 #include "stdafx.h"
 #include "Timer.h"
 
-CCustomTimer::CCustomTimer(bool isCountDown = false, std::chrono::duration<double> interval = {}) {
-	//TODO INITIALISE m_interval && isCountDown
-}
+CCustomTimer::CCustomTimer(bool isCountDown, std::chrono::duration<double> interval) :
+	m_isCountDown(isCountDown),
+	m_interval(interval)
+{
+
+};
+
 bool CCustomTimer::isRunning() const
 {
 	return m_startTime != std::chrono::steady_clock::time_point{};
 }
 
-void CCustomTimer::Start(bool isCountDown, int interval)
+void CCustomTimer::Start()
 {
-	if (!isRunning() && !isCountDown) {
+	if (!isRunning() && !m_isCountDown) {
 		m_startTime = std::chrono::steady_clock::now();
 	}
 	else {
@@ -57,7 +61,7 @@ std::chrono::duration<double> CCustomTimer::GetElapsedTime()
 		}
 	}
 	else {
-		temp += std::chrono::duration<double>(m_endTime - GetCurrentTime());
+		temp += std::chrono::duration<double>(m_endTime - GetCurrentTime()  );
 	}
 	return temp;
 }

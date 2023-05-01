@@ -10,10 +10,7 @@
 
 void CGame::Init()
 {
-
-
 	CTileMap::Get().Load();
-
 
 	m_herd.MakeHerd(15);
 	for (auto sheep : m_herd.GetHerd()) {
@@ -23,7 +20,7 @@ void CGame::Init()
 	CPhysicsManager::Get().AddBody(player->GetBoundingBox());
 	m_herd.SetDog(player);
 
-	timer.Start(true, m_gameLoopTime);
+	m_countdown.Start();
 	//timer.Start();
 }
 
@@ -45,11 +42,11 @@ void CGame::Update(float deltaTime)
 		}
 
 		bool isWin = m_herd.GetDeadSheepCount() == m_herd.GetSheepCount();
-		bool isOutOfTime = timer.GetElapsedTime() > std::chrono::duration<double>(m_gameLoopTime);
+		bool isOutOfTime = m_countdown.GetElapsedTime() < std::chrono::duration<double>(0);
 
 		if (isWin || isOutOfTime) {
-			timer.Reset();
-			timer.Start(true, m_gameLoopTime);
+			m_countdown.Reset();
+			m_countdown.Start();
 			//timer.Start();
 			CTileMap::Get().Load();
 			m_herd.ResetSheep();
@@ -79,7 +76,7 @@ void CGame::Render()
 
 	if(!isPaused) {
 		deadSheep= m_herd.GetDeadSheepCount();
-		timeRemaining = (int)timer.GetElapsedTime().count();
+		timeRemaining = (int)m_countdown.GetElapsedTime().count();
 	}
 	sprintf(buf1, "Time Remaining: %d", timeRemaining);
 
@@ -101,11 +98,11 @@ void CGame::ProcessInputs()
 	if (m_controller.CheckButton(XINPUT_GAMEPAD_START)) {
 		if (isPaused) {
 			isPaused = false;
-			timer.Start();
+			m_countdown.Start();
 		}
 		else {
 			isPaused = true;
-			timer.Stop();
+			m_countdown.Stop();
 
 		}
 	}

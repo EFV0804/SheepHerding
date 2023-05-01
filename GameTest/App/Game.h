@@ -34,6 +34,7 @@ private:
 	const CController& m_controller{ CSimpleControllers::GetInstance().GetController(0) };
 	std::vector<CActor*> m_actors;
 	CHerdManager m_herd;
-	CCustomTimer timer{};
-	int m_gameLoopTime{ 15 };
+	CCustomTimer m_timer{};
+	std::chrono::duration<double> m_levelTime{4 };
+	CCustomTimer m_countdown{ true, m_levelTime };
 };
