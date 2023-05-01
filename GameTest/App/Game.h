@@ -35,6 +35,6 @@ private:
 	std::vector<CActor*> m_actors;
 	CHerdManager m_herd;
 	CCustomTimer m_timer{};
-	std::chrono::duration<double> m_levelTime{4 };
+	std::chrono::duration<double> m_levelTime{ 30 };
 	CCustomTimer m_countdown{ true, m_levelTime };
 };

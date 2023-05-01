@@ -21,7 +21,6 @@ void CGame::Init()
 	m_herd.SetDog(player);
 
 	m_countdown.Start();
-	//timer.Start();
 }
 
 void CGame::PreUpdate(float deltaTime)
@@ -47,7 +46,6 @@ void CGame::Update(float deltaTime)
 		if (isWin || isOutOfTime) {
 			m_countdown.Reset();
 			m_countdown.Start();
-			//timer.Start();
 			CTileMap::Get().Load();
 			m_herd.ResetSheep();
 		}

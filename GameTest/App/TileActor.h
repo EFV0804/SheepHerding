@@ -14,7 +14,7 @@ class CTileActor :
 public:
 	CTileActor() = delete;
 	CTileActor(CVec2 position, TileType type, int order = 1);
-
+	const TileType GetType() const { return m_type; }
 private:
 	TileType m_type;
 	CSpriteComponent* m_sprite = nullptr;

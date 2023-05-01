@@ -52,7 +52,7 @@ void CHerdManager::ComputeSheep(float deltaTime)
 	ComputePosition();
 
 	for (auto sheep : m_herd) {
-		//DetectEnclosure(sheep);
+		DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 

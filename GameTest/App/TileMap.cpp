@@ -91,13 +91,14 @@ void CTileMap::ReadFromFile(const char* filename)
 
 int CTileMap::GetTileType(CVec2 position)
 {
-	int row{ 30 };
+	int row{ 0 };
 	int col{ 0 };
-	//CVec2 temp_position{ 65.0f,0.1f };
+
 	if (position.m_x < APP_VIRTUAL_WIDTH && position.m_x > 0 && position.m_y < APP_VIRTUAL_HEIGHT && position.m_y > 0) {
 		col = floor(position.m_x / TILE_SIZE);
 		row = floor(position.m_y / TILE_SIZE);
-		return m_tilemap[row * m_cols + col];
+
+		return m_tiles.at(row * m_cols + col)->GetType();
 	}
 	else {
 		return -1;
