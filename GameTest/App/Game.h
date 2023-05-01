@@ -6,6 +6,7 @@
 #include "PhysicsManager.h"
 #include "HerdManager.h"
 #include "Timer.h"
+#include "SimpleController.h"
 
 class CGame {
 public:
@@ -23,11 +24,14 @@ public:
 	void Update(float deltaTime);
 	void Render();
 	void Shutdown();
+	void ProcessInputs();
 
 	void AddActor(CActor* actor);
 	void RemoveActor(CActor* actor);
 
 private:
+	bool isPaused = false;
+	const CController& m_controller{ CSimpleControllers::GetInstance().GetController(0) };
 	std::vector<CActor*> m_actors;
 	CHerdManager m_herd;
 	CCustomTimer timer{};

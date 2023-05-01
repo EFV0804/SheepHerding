@@ -187,9 +187,6 @@
     <ClInclude Include="App\InputComponent.h" />
     <ClInclude Include="App\main.h" />
     <ClInclude Include="App\Timer.h" />
-    <ClInclude Include="App\UIBack.h" />
-    <ClInclude Include="App\UIFront.h" />
-    <ClInclude Include="App\UIManager.h" />
     <ClInclude Include="App\Math.h" />
     <ClInclude Include="App\PhysicsManager.h" />
     <ClInclude Include="App\PlayerActor.h" />
@@ -215,9 +212,6 @@
     <ClCompile Include="App\InputComponent.cpp" />
     <ClCompile Include="App\main.cpp" />
     <ClCompile Include="App\Timer.cpp" />
-    <ClCompile Include="App\UIBack.cpp" />
-    <ClCompile Include="App\UIFront.cpp" />
-    <ClCompile Include="App\UIManager.cpp" />
     <ClCompile Include="App\PhysicsManager.cpp" />
     <ClCompile Include="App\PlayerActor.cpp" />
     <ClCompile Include="App\SheepActor.cpp" />

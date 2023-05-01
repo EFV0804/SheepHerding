@@ -1,30 +1,45 @@
 #include "stdafx.h"
 #include "Timer.h"
 
-
-void CCustomTimer::Start()
+CCustomTimer::CCustomTimer(bool isCountDown = false, std::chrono::duration<double> interval = {}) {
+	//TODO INITIALISE m_interval && isCountDown
+}
+bool CCustomTimer::isRunning() const
 {
-	m_startTime = std::chrono::steady_clock::now();
+	return m_startTime != std::chrono::steady_clock::time_point{};
 }
 
-void CCustomTimer::StartCountDown(int interval)
+void CCustomTimer::Start(bool isCountDown, int interval)
 {
-	m_startTime = std::chrono::steady_clock::now() + std::chrono::seconds(interval);
-	//endtime
+	if (!isRunning() && !isCountDown) {
+		m_startTime = std::chrono::steady_clock::now();
+	}
+	else {
+		m_startTime = std::chrono::steady_clock::now();
+		m_endTime = std::chrono::steady_clock::now() + m_interval;
+		//m_isCountDown = true;
+		//m_interval = std::chrono::seconds(interval);
+	}
 }
 
-bool CCustomTimer::isOutOfTime()
+void CCustomTimer::Stop()
 {
-	return m_startTime < GetCurrentTime();
+	if (isRunning() && !m_isCountDown) {
+		m_elapsedTime = std::chrono::steady_clock::now() - m_startTime;
+		m_startTime = {};
+	}
+	else {
+		m_elapsedTime = m_endTime - std::chrono::steady_clock::now();
+		m_interval = m_interval - m_elapsedTime;
+		m_endTime = {};
+	}
 }
 
-void CCustomTimer::End()
+void CCustomTimer::Reset()
 {
-}
-
-void CCustomTimer::Update()
-{
-
+	m_startTime = {};
+	m_endTime = {};
+	m_elapsedTime = { };
 }
 
 std::chrono::steady_clock::time_point CCustomTimer::GetCurrentTime()
@@ -34,5 +49,15 @@ std::chrono::steady_clock::time_point CCustomTimer::GetCurrentTime()
 
 std::chrono::duration<double> CCustomTimer::GetElapsedTime()
 {
-	return std::chrono::duration<double>(GetCurrentTime() - m_startTime);
+	std::chrono::duration<double> temp = m_elapsedTime;
+	if (!m_isCountDown) {
+	
+		if (isRunning()) {
+			temp += std::chrono::duration<double>(GetCurrentTime() - m_startTime);
+		}
+	}
+	else {
+		temp += std::chrono::duration<double>(m_endTime - GetCurrentTime());
+	}
+	return temp;
 }

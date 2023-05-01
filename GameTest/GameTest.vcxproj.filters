@@ -62,11 +62,6 @@
     <ClCompile Include="App\HerdManager.cpp">
       <Filter>API\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="App\UIManager.cpp">
-      <Filter>API\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UIFront.cpp" />
-    <ClCompile Include="App\UIBack.cpp" />
     <ClCompile Include="App\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,11 +134,6 @@
     <ClInclude Include="App\HerdManager.h">
       <Filter>API\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="App\UIManager.h">
-      <Filter>API\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="App\UIFront.h" />
-    <ClInclude Include="App\UIBack.h" />
     <ClInclude Include="App\Timer.h" />
   </ItemGroup>
   <ItemGroup>
