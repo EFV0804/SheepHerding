@@ -20,9 +20,9 @@ public:
 	CVec2 MoveToCenter(CSheepActor * sheep);
 	CVec2 AvoidOthers(CSheepActor* sheep);
 	CVec2 MatchVelocity(CSheepActor* sheep);
+	CVec2 Flee(CSheepActor* sheep, CActor* target);
 	void LimitVelocity(CSheepActor* sheep);
 	void RandomiseVelocity(CSheepActor* sheep);
-	CVec2 BindPosition(CSheepActor* sheep, float deltaTime);
 	void SetIsGrazing(CSheepActor* sheep);
 	void DetectEnclosure(CSheepActor* sheep);
 	void ResetSheep();
@@ -34,7 +34,7 @@ public:
 
 private:
 	CVec2 m_position{200.0f, 100.0f };
-	float m_radius{ 100.0f };
+	float m_radius{ 150.0f };
 	std::vector<CSheepActor*> m_herd;
 	CPlayerActor* m_dog = nullptr;
 	int m_sheepCount{ 0 };

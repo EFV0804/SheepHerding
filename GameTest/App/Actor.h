@@ -33,7 +33,7 @@ public:
 
 	virtual void ButtonAction(int button);
 	CVec2 m_orientation{ 0.0f,0.0f };
-
+	CVec2 m_velocity{ 0.0f,0.0f };
 
 protected:
 	CVec2 m_position;

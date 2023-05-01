@@ -9,7 +9,7 @@
 
 constexpr float centeringFactor{ 0.2f };
 constexpr float avoidanceFactor{0.5f };
-constexpr float cohesionFactor{ 2.5f };
+constexpr float cohesionFactor{ 15.0f };
 constexpr int grazingChance{ 5 };
 
 CHerdManager::CHerdManager()
@@ -29,11 +29,15 @@ void CHerdManager::MakeHerd(int sheepCount)
 		CVec2 randPos{x,y};
 
 		m_herd.push_back(new CSheepActor(randPos));
+		x = rand() % 1;
+		y = rand() % 1;
+		m_herd.back()->m_velocity = CVec2{x, y};
 	}
 }
 
 void CHerdManager::ComputeDog(float deltaTime)
 {
+
 	for (auto sheep : m_herd) {
 		CVec2 distanceVec = m_dog->GetPosition() - sheep->GetPosition();
 		float distance = distanceVec.Length();
@@ -42,40 +46,40 @@ void CHerdManager::ComputeDog(float deltaTime)
 			dir.Normalised();
 			float repelStrength =  m_dog->GetForce() - distance;
 			CVec2 force = repelStrength * dir;
-			CPhysicsManager::Get().UpdateActorPosition(sheep->GetBoundingBox(), force*0.002f, deltaTime);
+			CPhysicsManager::Get().UpdateActorPosition(sheep, force*0.002f, deltaTime);
 		}
 	}
 }
 
 void CHerdManager::ComputeSheep(float deltaTime)
 {
-	ComputePosition();
 
 	for (auto sheep : m_herd) {
 		DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 
-			//SetIsGrazing(sheep);
+			SetIsGrazing(sheep);
+
 
 			if (!sheep->m_isGrazing) {
-				//CVec2 centerVec = MoveToCenter(sheep);
-				//sheep->m_velocity += centerVec;
-				//CVec2 avoidanceVec = AvoidOthers(sheep);
-				//sheep->m_velocity += avoidanceVec;
+				CVec2 centerVec = MoveToCenter(sheep);
+				sheep->m_velocity += centerVec;
+				CVec2 avoidanceVec = AvoidOthers(sheep);
+				sheep->m_velocity += avoidanceVec;
 				CVec2 velocityVec = MatchVelocity(sheep);
 				sheep->m_velocity += velocityVec;
-				CVec2 boundVelocity = BindPosition(sheep, deltaTime);
-				sheep->m_velocity += boundVelocity;
+
+				CVec2 fleeVec = Flee(sheep, m_dog);
+				sheep->m_velocity += fleeVec;
 
 			}
 
 			LimitVelocity(sheep);
 			//RandomiseVelocity(sheep);
 
-			CPhysicsManager::Get().UpdateActorPosition(sheep->GetBoundingBox(), sheep->m_velocity, deltaTime);
+			CPhysicsManager::Get().UpdateActorPosition(sheep, sheep->m_velocity, deltaTime);
 
-			//sheep->m_velocity *= 0.5f;
 
 		}
 	}
@@ -85,6 +89,7 @@ void CHerdManager::Update(float deltaTime)
 {
 	ComputeDog(deltaTime);
 	ComputeSheep(deltaTime);
+
 }
 
 void CHerdManager::ComputePosition()
@@ -93,15 +98,17 @@ void CHerdManager::ComputePosition()
 	float y{ 0.0f };
 
 	for (auto sheep : m_herd) {
-		x += sheep->GetPosition().m_x;
-		y += sheep->GetPosition().m_y;
+		if (sheep->m_isActive) {
+			x += sheep->GetPosition().m_x;
+			y += sheep->GetPosition().m_y;
+		}
 	}
 	m_position = CVec2(x / m_herd.size(), y / m_herd.size());
 }
 
 CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
 {
-	//ComputePosition();
+	ComputePosition();
 
 	CVec2 vecToHerd = m_position - sheep->GetPosition();
 	float distanceToHerd = vecToHerd.Length();
@@ -113,6 +120,7 @@ CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
 		return vecToHerd * centeringFactor;
 	}
 	else {
+		sheep->m_velocity *= 0.5;
 		return CVec2(0.0f, 0.0f);
 	}
 
@@ -141,7 +149,7 @@ CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
 	CVec2 center{ 0.0f,0.0f };
 
 	for (auto otherSheep : m_herd) {
-		if (otherSheep != sheep) {
+		if (otherSheep != sheep && sheep->m_isActive) {
 			CVec2 vecToSheep = sheep->GetPosition() - otherSheep->GetPosition();
 			float distanceBetweenSheep = vecToSheep.Length();
 
@@ -150,7 +158,19 @@ CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
 			}
 		}
 	}
-	return center * avoidanceFactor;
+
+	ComputePosition();
+	CVec2 vecToHerd = m_position - sheep->GetPosition();
+	float distanceToHerd = vecToHerd.Length();
+
+	if (distanceToHerd <= m_radius) {
+		float reductionFactor = avoidanceFactor * 0.001;
+		return center*reductionFactor;
+	}
+	else {
+		return center * avoidanceFactor;
+	}
+
 
 }
 
@@ -160,7 +180,7 @@ CVec2 CHerdManager::MatchVelocity(CSheepActor* sheep)
 	//int count{ 0 };
 
 	//for (auto otherSheep : m_herd) {
-	//	if (otherSheep != sheep) {
+	//	if (otherSheep != sheep && sheep->m_isActive) {
 	//		velocity += otherSheep->m_velocity;
 	//		count++;
 	//	}
@@ -169,24 +189,37 @@ CVec2 CHerdManager::MatchVelocity(CSheepActor* sheep)
 	//velocity /= count;
 	//CVec2 sheepNewVel = (velocity - sheep->m_velocity) * cohesionFactor;
 
-	//CVec2 normNewVel = CVec2::Normalised(sheepNewVel);
-	//CVec2 normVel = CVec2::Normalised(sheep->m_orientation);
 
+	//ORIENTATION
 	CVec2 spriteDefaultDir{ 0.0f, 1.0f };
 	float cross = CVec2::cross(sheep->m_orientation, spriteDefaultDir);
 	float dot = CVec2::dot(sheep->m_orientation, spriteDefaultDir);
-	//float x = dot / sheepNewVel.Length() * sheep->m_velocity.Length();
 
-	auto angle = acos(dot)/*-Math::pi/2*/;
+	auto angle = acos(dot);
 	if (cross > 0) {
 		angle = -angle;
 	}
-
-	//sheepNewVel.Rotate(angle);
 	sheep->GetSprite()->GetSprite()->SetAngle(angle);
+
+	//END
 
 	return velocity;
 
+}
+
+CVec2 CHerdManager::Flee(CSheepActor* sheep, CActor* target)
+{
+	if ((target->GetPosition() - sheep->GetPosition()).Length() < 200.0f) {
+		CVec2 targetToSheep = sheep->GetPosition() - target->GetPosition();
+		CVec2 desiredVel = CVec2::Normalised(targetToSheep)*0.2;
+		CVec2 steeringVec = desiredVel - sheep->m_velocity;
+		steeringVec.Normalised();
+		steeringVec *= 0.003;
+		return steeringVec;
+	}
+	else {
+		return CVec2{0.0f,0.0f};
+	}
 }
 
 void CHerdManager::LimitVelocity(CSheepActor* sheep)
@@ -205,51 +238,6 @@ void CHerdManager::RandomiseVelocity(CSheepActor* sheep)
 	CVec2 dir{ x, y };
 	//dir.Normalised();
 	sheep->m_velocity += dir * 1.11;
-}
-
-CVec2 CHerdManager::BindPosition(CSheepActor* sheep, float deltaTime)
-{
-	int xMin = 50;
-	int yMin = 50;
-	int xMax = APP_VIRTUAL_WIDTH-50;
-	int yMax = APP_VIRTUAL_HEIGHT-50;
-
-	CVec2 vec{ 0.0f,0.0f };
-	CVec2 predictedPos = CPhysicsManager::Get().GetPredictedPosition(sheep, sheep->m_velocity*2.5f, deltaTime);
-
-
-
-
-
-
-	if (predictedPos.m_x <= xMin) {
-		sheep->m_velocity.m_x = 0;
-		float cross = CVec2::cross(sheep->m_orientation, CVec2{ 1.0f,0.0f });
-		float dot = CVec2::dot(sheep->m_orientation, CVec2{ 1.0f,0.0f });
-
-		auto angle = acos(dot);
-		if (cross > 0) {
-			angle = -angle;
-		}
-		sheep->m_velocity.Rotate(angle);
-	}
-	else if (predictedPos.m_x >= xMax) {
-		//vec.m_x = 0;
-		sheep->m_velocity.m_x = 0;
-
-	}
-	if (predictedPos.m_y <= yMin) {
-		//vec.m_y = 0;
-		sheep->m_velocity.m_y = 0;
-
-	}
-	else if (predictedPos.m_y >= yMax) {
-		//vec.m_y = 0;
-		sheep->m_velocity.m_y = 0;
-
-	}
-
-	return vec;
 }
 
 void CHerdManager::SetIsGrazing(CSheepActor* sheep)
@@ -271,6 +259,7 @@ void CHerdManager::SetIsGrazing(CSheepActor* sheep)
 			if (isGrazing < grazingChance) {
 				sheep->m_startGrazeTime = std::chrono::steady_clock::now();
 				sheep->m_isGrazing = true;
+				//TODO MOVE AWAY FROM HERD
 				sheep->m_velocity *= 0.0f;
 
 				//DEBUG

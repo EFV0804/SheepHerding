@@ -17,7 +17,6 @@ public:
     bool CanGraze();
     const int GetOrder() const { return m_updateOrder; }
 
-    CVec2 m_velocity{ 0.0f,0.0f };
     bool m_isGrazing = false;
     bool m_isActive = true;
 

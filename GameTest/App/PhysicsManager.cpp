@@ -48,11 +48,34 @@ bool CPhysicsManager::AABBCollision(CBoundingBoxComponent* a, CBoundingBoxCompon
 
 }
 
-void CPhysicsManager::UpdateActorPosition(CBoundingBoxComponent* bb, CVec2& force, float deltaTime)
+void CPhysicsManager::UpdateActorPosition(CActor* actor, CVec2& force, float deltaTime)
 {
+	int xMin = 0;
+	int yMin = 0;
+	int xMax = APP_VIRTUAL_WIDTH;
+	int yMax = APP_VIRTUAL_HEIGHT;
+
+	CVec2 vec{ 0.0f,0.0f };
+	CVec2 predictedPos = CPhysicsManager::Get().GetPredictedPosition(actor, force * 2.0f, deltaTime);
+
+
+	if (predictedPos.m_x <= xMin) {
+		force = force * CVec2{ -1.0f,1.0f };
+	}
+	else if (predictedPos.m_x >= xMax) {
+		force = force * CVec2{ -1.0f,1.0f };
+	}
+	if (predictedPos.m_y <= yMin) {
+		force = force * CVec2{ 1.0f,-1.0f };
+	}
+	else if (predictedPos.m_y >= yMax) {
+		force = force * CVec2{ 1.0f,-1.0f };
+
+	}
+
 	CVec2 translate{ 0.0f,0.0f };
-	translate = bb->GetPosition() + force * deltaTime;
-	bb->SetPosition(translate);
+	translate = actor->GetPosition() + force * deltaTime;
+	actor->SetPosition(translate);
 }
 
 
