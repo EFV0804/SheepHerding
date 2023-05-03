@@ -7,9 +7,9 @@
 #include "TileMap.h"
 #include "Math.h"
 
-constexpr float centeringFactor{ 0.2f };
+constexpr float centeringFactor{ 0.01f };
 constexpr float avoidanceFactor{0.5f };
-constexpr float cohesionFactor{ 15.0f };
+constexpr float cohesionFactor{ 0.1f };
 constexpr int grazingChance{ 5 };
 
 CHerdManager::CHerdManager()
@@ -55,11 +55,11 @@ void CHerdManager::ComputeSheep(float deltaTime)
 {
 
 	for (auto sheep : m_herd) {
-		DetectEnclosure(sheep);
+		//DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 
-			SetIsGrazing(sheep);
+			//SetIsGrazing(sheep);
 
 
 			if (!sheep->m_isGrazing) {
@@ -112,17 +112,31 @@ CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
 
 	CVec2 vecToHerd = m_position - sheep->GetPosition();
 	float distanceToHerd = vecToHerd.Length();
+	CVec2 dirToHerd = CVec2::Normalised(vecToHerd);
+	bool isTowardsHerd = true;
+	float dot = CVec2::dot(CVec2::Normalised(sheep->m_velocity), dirToHerd);
 
-	vecToHerd.Normalised();
+	if(dot < 1 && distanceToHerd < m_radius) {
+		isTowardsHerd = false;
+	}
 
-	if (distanceToHerd > m_radius) {
+	if (isTowardsHerd) {
+		if (distanceToHerd > m_radius) {
+			CVec2 steering = vecToHerd - sheep->m_velocity;
+			return steering ;
 
-		return vecToHerd * centeringFactor;
+		}
+		else {
+			sheep->m_velocity *= 0.5;
+			return CVec2(0.0f, 0.0f);
+		}
 	}
 	else {
+
 		sheep->m_velocity *= 0.5;
 		return CVec2(0.0f, 0.0f);
 	}
+
 
 
 	//}
@@ -153,7 +167,7 @@ CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
 			CVec2 vecToSheep = sheep->GetPosition() - otherSheep->GetPosition();
 			float distanceBetweenSheep = vecToSheep.Length();
 
-			if (distanceBetweenSheep < 50.0f) {
+			if (distanceBetweenSheep < m_sheepForce) {
 				center += vecToSheep;
 			}
 		}
@@ -164,7 +178,7 @@ CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
 	float distanceToHerd = vecToHerd.Length();
 
 	if (distanceToHerd <= m_radius) {
-		float reductionFactor = avoidanceFactor * 0.001;
+		float reductionFactor = avoidanceFactor * 0.005;
 		return center*reductionFactor;
 	}
 	else {
@@ -288,6 +302,16 @@ void CHerdManager::ResetSheep()
 		sheep->m_isActive = true;
 		sheep->GetSprite()->GetSprite()->SetFrame(0);
 	}
+	//RESET POSITION
+	// int type{0};
+	// while do(type == 0){
+	// 	type = CTileMap::Get().GetTileType(sheep->GetPosition());
+	// 
+		//CVec2 newPos{ rand % 900, rand % 600 };
+	// }
+	// 
+	// sheep.SetPosition(newPos);
+	
 }
 
 const int& CHerdManager::GetDeadSheepCount()
