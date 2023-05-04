@@ -1,7 +1,7 @@
 #pragma once
 #include "Actor.h"
 #include "SpriteComponent.h"
-#include "BoundingBoxComponent.h"
+
 #include <chrono>
 
 class CSheepActor :
@@ -11,7 +11,6 @@ public:
     CSheepActor(CVec2 position, int order=2);
     CBoundingBoxComponent* GetBoundingBox() { return m_bb; }
 
-    void Render();
     void UpdateActor();
     void DrawBoundingBox();
     bool CanGraze();
@@ -31,6 +30,5 @@ public:
 
 private:
     CSpriteComponent* m_sprite = nullptr;
-    CBoundingBoxComponent* m_bb = nullptr;
     int m_updateOrder{ 2 };
 };

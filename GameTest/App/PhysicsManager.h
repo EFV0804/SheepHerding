@@ -26,11 +26,14 @@ public:
 
 	void Update(float deltaTime);
 	CVec2 GetPredictedPosition(CActor* actor, CVec2& force, float deltaTime);
-	bool AABBCollision(CBoundingBoxComponent* a, CBoundingBoxComponent* b);
+	void WallCollision(CActor* actor, CVec2& force, float deltaTime);
+	bool AABBCollision(const CBoundingBoxComponent* a, const CBoundingBoxComponent* b);
 	void UpdateActorPosition(CActor* actor, CVec2& translate, float deltaTime);
 	void AddBody(CBoundingBoxComponent* bb);
+	void RemoveBody(CBoundingBoxComponent* bb);
 
 private:
-	std::vector<CBoundingBoxComponent*> m_bodies;
+	std::vector<CBoundingBoxComponent*> m_staticBodies;
+	std::vector<CBoundingBoxComponent*> m_dynamicBodies;
 	CCompareAABB m_compare;
 };

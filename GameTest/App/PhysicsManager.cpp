@@ -2,6 +2,7 @@
 #include "PhysicsManager.h"
 #include <algorithm>
 #include "app.h"
+#include <array>
 
 CPhysicsManager::CPhysicsManager(): m_compare(0)
 {
@@ -19,7 +20,43 @@ CVec2 CPhysicsManager::GetPredictedPosition(CActor* actor, CVec2& force, float d
 	return translate;
 }
 
-bool CPhysicsManager::AABBCollision(CBoundingBoxComponent* a, CBoundingBoxComponent* b)
+void CPhysicsManager::WallCollision(CActor* actor, CVec2& force, float deltaTime)
+{
+	std::array<CVec2, 4> dirs = {
+		CVec2{ 1.0f,0.0f },CVec2{-1.0f,0.0f},CVec2{0.0f,1.0f},CVec2{0.0f,-1.0f}
+
+	};
+
+	for(auto body : m_staticBodies){
+
+		if (AABBCollision(body, actor->GetBoundingBox())) {
+
+			CVec2 centerBody = body->GetCenter();
+			CVec2 vecToActor = actor->GetPosition() - centerBody;
+			vecToActor.Normalised();
+			
+			CVec2 closestDir{0.0f,0.0f};
+			float highestDot{-1.0f };
+
+			for (int i = 0; i < dirs.size(); i++) {
+				float dot = CVec2::dot(vecToActor, dirs[i]);
+				if (dot > highestDot) {
+					highestDot = dot;
+					closestDir = dirs[i];
+				}
+			}
+			 
+			if (closestDir.m_x != 0) {
+				force.m_x *= -1;
+			}
+			else if (closestDir.m_y != 0) {
+				force.m_y *= -1;
+			}
+		}
+	}
+}
+
+bool CPhysicsManager::AABBCollision(const CBoundingBoxComponent* a, const CBoundingBoxComponent* b)
 {
 
 	float aScale = a->GetScale();
@@ -70,16 +107,42 @@ void CPhysicsManager::UpdateActorPosition(CActor* actor, CVec2& force, float del
 	}
 	else if (predictedPos.m_y >= yMax) {
 		force = force * CVec2{ 1.0f,-1.0f };
-
 	}
+	if (actor->GetBoundingBox() != nullptr) {
+		//WallCollision(actor, force, deltaTime);
+	}
+
 
 	CVec2 translate{ 0.0f,0.0f };
 	translate = actor->GetPosition() + force * deltaTime;
 	actor->SetPosition(translate);
 }
 
-
 void CPhysicsManager::AddBody(CBoundingBoxComponent* bb)
 {
-	m_bodies.push_back(bb);
+	if (bb->m_isStatic) {
+		m_staticBodies.push_back(bb);
+	}
+	else {
+		m_dynamicBodies.push_back(bb);
+
+	}
+
+}
+
+void CPhysicsManager::RemoveBody(CBoundingBoxComponent* bb)
+{
+	if (bb->m_isStatic) {
+		auto iter = std::find(begin(m_staticBodies), end(m_staticBodies), bb);
+		if (iter != end(m_staticBodies)) {
+			m_staticBodies.erase(iter);
+		}
+	}
+	else {
+		auto iter = std::find(begin(m_dynamicBodies), end(m_dynamicBodies), bb);
+		if (iter != end(m_dynamicBodies)) {
+			m_dynamicBodies.erase(iter);
+		}
+	}
+
 }

@@ -3,12 +3,19 @@
 #include "Actor.h"
 #include "Math.h"
 #include "app.h"
+#include "PhysicsManager.h"
 
-CBoundingBoxComponent::CBoundingBoxComponent(CActor* owner, int updateOrder, CVec2 size):
-	CComponent(owner, updateOrder, false),
-	m_size {size}
+CBoundingBoxComponent::CBoundingBoxComponent(CActor* owner, int updateOrder, CVec2 size, bool isStatic):
+	CComponent(owner, updateOrder, true),
+	m_size {size},
+	m_isStatic{isStatic}
 {
+		CPhysicsManager::Get().AddBody(this);
+}
 
+CBoundingBoxComponent::~CBoundingBoxComponent()
+{
+	CPhysicsManager::Get().RemoveBody(this);
 }
 
 void CBoundingBoxComponent::SetPosition(CVec2 position)
@@ -52,19 +59,21 @@ const int CBoundingBoxComponent::GetForce() const
 
 void CBoundingBoxComponent::Render()
 {
-	CVec2 position{ 0.0f,0.0f };
-	m_owner.GetPosition(position);
-	float angle = m_owner.GetAngle();
-	angle = Math::toDegrees(angle);
-	float scale = m_owner.GetScale();
+	if (RENDER_BB) {
+		CVec2 position{ 0.0f,0.0f };
+		m_owner.GetPosition(position);
+		float angle = m_owner.GetAngle();
+		angle = Math::toDegrees(angle);
+		float scale = m_owner.GetScale();
 
-	float aMinX = (position.m_x - ((m_size.m_x / 4.0f) * scale));
-	float aMinY = (position.m_y - ((m_size.m_y / 4.0f) * scale));
-	float aMaxX = (aMinX + ((m_size.m_x / 2.0f) * scale));
-	float aMaxY = (aMinY + ((m_size.m_y / 2.0f) * scale));
+		float aMinX = (position.m_x - ((m_size.m_x / 4.0f) * scale));
+		float aMinY = (position.m_y - ((m_size.m_y / 4.0f) * scale));
+		float aMaxX = (aMinX + ((m_size.m_x / 2.0f) * scale));
+		float aMaxY = (aMinY + ((m_size.m_y / 2.0f) * scale));
 
-	App::DrawLine(aMinX, aMinY, aMaxX, aMinY, 1.0f, 0.0f, 0.0f);
-	App::DrawLine(aMinX, aMinY, aMinX, aMaxY, 1.0f, 0.0f, 0.0f);
-	App::DrawLine(aMaxX, aMinY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
-	App::DrawLine(aMinX, aMaxY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMinY, aMaxX, aMinY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMinY, aMinX, aMaxY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMaxX, aMinY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
+		App::DrawLine(aMinX, aMaxY, aMaxX, aMaxY, 1.0f, 0.0f, 0.0f);
+	}
 }

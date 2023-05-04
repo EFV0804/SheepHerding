@@ -49,8 +49,12 @@
 #define APP_PAD_EMUL_BUTTON_LEFT_SHOULDER	('3')
 #define APP_PAD_EMUL_BUTTON_RIGHT_SHOULDER	('4')
 
+//CUSTOM MACROS
+#define RENDER_BB							false
+
 #ifdef _DEBUG
 #define APP_RENDER_UPDATE_TIMES				true
+#define RENDER_BB							true
 #else
 #define APP_RENDER_UPDATE_TIMES				false
 #endif

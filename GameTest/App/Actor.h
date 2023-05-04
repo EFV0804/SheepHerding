@@ -5,6 +5,7 @@
 #include <memory>
 #include "Component.h"
 #include "app.h"
+#include "BoundingBoxComponent.h"
 
 
 class CActor
@@ -24,6 +25,7 @@ public:
 	float GetAngle() const { return m_angle; }
 	int GetForce() const { return m_force; }
 	const int GetOrder() const { return m_updateOrder; }
+	const CBoundingBoxComponent* GetBoundingBox() const { return m_bb; }
 	void SetPosition(CVec2& position);
 	void SetScale(float scale) { m_scale = scale; }
 	void SetForce(int force) { m_force = force; }
@@ -43,6 +45,7 @@ protected:
 	float m_angle{ 0.0f };
 	int m_force{ 0 };
 	std::vector<CComponent*> m_components;
+	CBoundingBoxComponent* m_bb = nullptr;
 	int m_updateOrder;
 
 };

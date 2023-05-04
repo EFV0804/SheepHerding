@@ -19,10 +19,13 @@ CHerdManager::CHerdManager()
 
 void CHerdManager::MakeHerd(int sheepCount)
 {
+	
 	m_sheepCount = sheepCount;
+	m_activeSheep = m_sheepCount;
+
 	srand(time(0));
 
-	for (int i = 0; i < m_sheepCount; i++) {
+	for (int i = 0; i <= m_sheepCount; i++) {
 
 		float x = 1 + rand() % 900;
 		float y = 1 + rand() % 600;
@@ -53,9 +56,8 @@ void CHerdManager::ComputeDog(float deltaTime)
 
 void CHerdManager::ComputeSheep(float deltaTime)
 {
-
 	for (auto sheep : m_herd) {
-		//DetectEnclosure(sheep);
+		DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 
@@ -103,59 +105,42 @@ void CHerdManager::ComputePosition()
 			y += sheep->GetPosition().m_y;
 		}
 	}
-	m_position = CVec2(x / m_herd.size(), y / m_herd.size());
+
+	m_position = CVec2(x / m_activeSheep, y / m_activeSheep);
 }
 
 CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
 {
 	ComputePosition();
 
-	CVec2 vecToHerd = m_position - sheep->GetPosition();
-	float distanceToHerd = vecToHerd.Length();
-	CVec2 dirToHerd = CVec2::Normalised(vecToHerd);
-	bool isTowardsHerd = true;
-	float dot = CVec2::dot(CVec2::Normalised(sheep->m_velocity), dirToHerd);
+	if (sheep->m_isActive) {
+		CVec2 vecToHerd = m_position - sheep->GetPosition();
+		float distanceToHerd = vecToHerd.Length();
+		CVec2 dirToHerd = CVec2::Normalised(vecToHerd);
+		bool isTowardsHerd = true;
+		float dot = CVec2::dot(CVec2::Normalised(sheep->m_velocity), dirToHerd);
 
-	if(dot < 1 && distanceToHerd < m_radius) {
-		isTowardsHerd = false;
-	}
+		if (dot < 1 && distanceToHerd < m_radius) {
+			isTowardsHerd = false;
+		}
 
-	if (isTowardsHerd) {
-		if (distanceToHerd > m_radius) {
-			CVec2 steering = vecToHerd - sheep->m_velocity;
-			return steering ;
+		if (isTowardsHerd) {
+			if (distanceToHerd > m_radius) {
+				CVec2 steering = vecToHerd - sheep->m_velocity;
+				return steering;
 
+			}
+			else {
+				sheep->m_velocity *= 0.5;
+				return CVec2(0.0f, 0.0f);
+			}
 		}
 		else {
+
 			sheep->m_velocity *= 0.5;
 			return CVec2(0.0f, 0.0f);
 		}
 	}
-	else {
-
-		sheep->m_velocity *= 0.5;
-		return CVec2(0.0f, 0.0f);
-	}
-
-
-
-	//}
-
-	/*CVec2 center{ 0.0f, 0.0f };
-	int count{ 0 };
-
-	for (auto otherSheep : m_herd) {
-		if (otherSheep != sheep) {
-			center += otherSheep->GetPosition();
-			count++;
-		}
-	}
-
-	center /= count;
-	CVec2 vecToHerd = (center - sheep->GetPosition()) / centeringFactor;
-
-	return vecToHerd;*/
-
 }
 
 CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
@@ -292,6 +277,7 @@ void CHerdManager::DetectEnclosure(CSheepActor* sheep)
 	
 	if (type == 0) {
 		sheep->m_isActive = false;
+		m_activeSheep -= 1;
 		sheep->GetSprite()->GetSprite()->SetFrame(1);
 	}
 }
@@ -300,6 +286,7 @@ void CHerdManager::ResetSheep()
 {
 	for (auto sheep : m_herd) {
 		sheep->m_isActive = true;
+		m_activeSheep = m_sheepCount;
 		sheep->GetSprite()->GetSprite()->SetFrame(0);
 	}
 	//RESET POSITION

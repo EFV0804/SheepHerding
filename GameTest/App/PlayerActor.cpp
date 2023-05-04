@@ -9,21 +9,11 @@ CPlayerActor::CPlayerActor(CVec2 position, int order): CActor(position, order)
 	float speed = 1.0f / 15.0f;
 	m_sprite->GetSprite()->CreateAnimation(ANIM_BARK,speed, { 0,1,2,3,4,5,6,7 });
 	
-
+	//TODO MAKE SPRITE SIZE STATIC CONST
 	m_bb = new CBoundingBoxComponent(this, 10, CVec2(128.0f,128.0f));
 	m_inputs = new CInputComponent(this, 10);
 	m_inputs->SetSpeed(8.0f);
 	m_force = m_baseForce;
-}
-
-void CPlayerActor::Render()
-{
-	//DrawBoundingBox();
-	for (auto component : m_components) {
-		if (component->IsRenderable()) {
-			component->Render();
-		}
-	}
 }
 
 void CPlayerActor::DrawBoundingBox()

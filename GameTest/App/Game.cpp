@@ -11,15 +11,9 @@
 void CGame::Init()
 {
 	CTileMap::Get().Load();
-
-	m_herd.MakeHerd(15);
-	for (auto sheep : m_herd.GetHerd()) {
-		CPhysicsManager::Get().AddBody(sheep->GetBoundingBox());
-	}
+	m_herd.MakeHerd(20);
 	CPlayerActor* player = new CPlayerActor(CVec2(500.0f, 400.0f));
-	CPhysicsManager::Get().AddBody(player->GetBoundingBox());
 	m_herd.SetDog(player);
-
 	m_countdown.Start();
 }
 
@@ -68,17 +62,9 @@ void CGame::Update(float deltaTime)
 void CGame::Render()
 {
 	char buf[50];
-	int activeSheep = m_herd.GetSheepCount();
-	int deadSheep{ 0 };
-	int timeRemaining{ 0 };
 
 	for (auto actor : m_actors) {
-		if (actor->GetForce() == 200) {
-			actor->Render();
-		}
-		else {
-			actor->Render();
-		}
+		actor->Render();
 	}
 
 	if(!m_isPaused ) {
@@ -90,21 +76,13 @@ void CGame::Render()
 				DisplayEndLevelMessage();
 			}
 		}
-
 	}
 	else {
 		sprintf(buf, "PAUSE");
 		App::Print(950, 540, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 	}
 
-
-	deadSheep = m_herd.GetDeadSheepCount();
-	timeRemaining = (int)std::chrono::duration_cast<std::chrono::seconds>(m_countdown.GetRemainingTime()).count();
-	sprintf(buf, "Time Remaining: %d", timeRemaining);
-	App::Print(20, 1000, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
-	sprintf(buf, " Gathered Sheep: %d/%d", deadSheep, activeSheep);
-	App::Print(20, 950, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
-
+	DisplayInGameUI();
 
 }
 
@@ -167,6 +145,21 @@ void CGame::DisplayEndLevelMessage()
 		sprintf(buf, "New Level in %d", timeUntilNewLevel);
 		App::Print(950, 520, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 	}
+}
+
+void CGame::DisplayInGameUI()
+{
+	char buf[50];
+	int activeSheep = m_herd.GetSheepCount();
+	int deadSheep{ 0 };
+	int timeRemaining{ 0 };
+
+	deadSheep = m_herd.GetDeadSheepCount();
+	timeRemaining = (int)std::chrono::duration_cast<std::chrono::seconds>(m_countdown.GetRemainingTime()).count();
+	sprintf(buf, "Time Remaining: %d", timeRemaining);
+	App::Print(20, 1000, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+	sprintf(buf, " Gathered Sheep: %d/%d", deadSheep, activeSheep);
+	App::Print(20, 950, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 }
 
 void CGame::AddActor(CActor* actor)
