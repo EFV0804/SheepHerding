@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "Timer.h"
 
-CCustomTimer::CCustomTimer(bool isCountDown, std::chrono::duration<double> interval) :
+CCustomTimer::CCustomTimer(bool isCountDown, std::chrono::milliseconds interval) :
 	m_isCountDown(isCountDown),
+	m_refInterval(interval),
 	m_interval(interval)
 {
 
@@ -10,40 +11,46 @@ CCustomTimer::CCustomTimer(bool isCountDown, std::chrono::duration<double> inter
 
 bool CCustomTimer::isRunning() const
 {
-	return m_startTime != std::chrono::steady_clock::time_point{};
+	return m_isRunning;
 }
 
 void CCustomTimer::Start()
 {
 	if (!isRunning() && !m_isCountDown) {
-		m_startTime = std::chrono::steady_clock::now();
+		m_startTime = GetCurrentTime();
 	}
 	else {
-		m_startTime = std::chrono::steady_clock::now();
-		m_endTime = std::chrono::steady_clock::now() + m_interval;
+		m_startTime = GetCurrentTime();
+		m_endTime = GetCurrentTime() + m_interval;
 		//m_isCountDown = true;
-		//m_interval = std::chrono::seconds(interval);
+		//m_interval = std::chrono::milliseconds(interval);
 	}
+	m_isRunning = true;
 }
 
 void CCustomTimer::Stop()
 {
 	if (isRunning() && !m_isCountDown) {
-		m_elapsedTime = std::chrono::steady_clock::now() - m_startTime;
+		
+		m_elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_startTime);
 		m_startTime = {};
 	}
 	else {
-		m_elapsedTime = m_endTime - std::chrono::steady_clock::now();
-		m_interval = m_interval - m_elapsedTime;
+		auto now = GetCurrentTime();
+		m_elapsedTime = m_refInterval - GetRemainingTime();
+		m_interval = GetRemainingTime();
 		m_endTime = {};
 	}
+	m_isRunning = false;
 }
 
 void CCustomTimer::Reset()
 {
 	m_startTime = {};
 	m_endTime = {};
-	m_elapsedTime = { };
+	m_elapsedTime = {};
+	m_interval = m_refInterval;
+	m_isRunning = true;
 }
 
 std::chrono::steady_clock::time_point CCustomTimer::GetCurrentTime()
@@ -51,17 +58,25 @@ std::chrono::steady_clock::time_point CCustomTimer::GetCurrentTime()
 	return std::chrono::steady_clock::now();
 }
 
-std::chrono::duration<double> CCustomTimer::GetElapsedTime()
+std::chrono::milliseconds CCustomTimer::GetElapsedTime()
 {
-	std::chrono::duration<double> temp = m_elapsedTime;
+	std::chrono::milliseconds temp = m_elapsedTime;
 	if (!m_isCountDown) {
 	
-		if (isRunning()) {
-			temp += std::chrono::duration<double>(GetCurrentTime() - m_startTime);
-		}
+		temp += std::chrono::duration_cast<std::chrono::milliseconds>(GetCurrentTime() - m_startTime);
 	}
 	else {
-		temp += std::chrono::duration<double>(m_endTime - GetCurrentTime()  );
+		temp += m_refInterval - GetRemainingTime();
 	}
 	return temp;
+}
+
+std::chrono::milliseconds CCustomTimer::GetRemainingTime() {
+
+	if (isRunning()) {
+		return std::chrono::duration_cast<std::chrono::milliseconds>(m_endTime - GetCurrentTime());
+	}
+	else {
+		return m_interval;
+	}
 }

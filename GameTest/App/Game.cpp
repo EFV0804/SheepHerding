@@ -25,37 +25,52 @@ void CGame::Init()
 
 void CGame::PreUpdate(float deltaTime)
 {
-	m_herd.Update(deltaTime);
-	CPhysicsManager::Get().Update(deltaTime);
+	if (!m_isPaused && !m_isWin || !m_isOutOfTime) {
+		m_herd.Update(deltaTime);
+		CPhysicsManager::Get().Update(deltaTime);
+	}
 }
 
 void CGame::Update(float deltaTime)
 {
 	ProcessInputs();
 
+	if (!m_isPaused) {
 
-	if (!isPaused) {
+		CheckWinCon();
 
-		for (auto actor : m_actors) {
-			actor->Update(deltaTime);
+		if (m_isWin || m_isOutOfTime) {
+			m_countdown.Stop();
+
+			if (!m_newLevelTimer.isRunning()) {
+				m_newLevelTimer.Reset();
+				m_newLevelTimer.Start();
+			}
+
+			m_StartNewLevel = m_newLevelTimer.GetRemainingTime() < std::chrono::milliseconds{ 0 };
+
+			if (m_StartNewLevel) {
+
+				m_newLevelTimer.Stop();
+
+				ResetWinCon();
+				LoadNewLevel();
+			}
 		}
-
-		bool isWin = m_herd.GetDeadSheepCount() == m_herd.GetSheepCount();
-		bool isOutOfTime = m_countdown.GetElapsedTime() < std::chrono::duration<double>(0);
-
-		if (isWin || isOutOfTime) {
-			m_countdown.Reset();
-			m_countdown.Start();
-			CTileMap::Get().Load();
-			m_herd.ResetSheep();
+		else {
+			for (auto actor : m_actors) {
+				actor->Update(deltaTime);
+			}
 		}
 	}
-
 }
 
 void CGame::Render()
 {
-
+	char buf[50];
+	int activeSheep = m_herd.GetSheepCount();
+	int deadSheep{ 0 };
+	int timeRemaining{ 0 };
 
 	for (auto actor : m_actors) {
 		if (actor->GetForce() == 200) {
@@ -64,24 +79,33 @@ void CGame::Render()
 		else {
 			actor->Render();
 		}
+	}
+
+	if(!m_isPaused ) {
+
+		if (m_isWin || m_isOutOfTime) {
+
+			if (!m_StartNewLevel) {
+
+				DisplayEndLevelMessage();
+			}
+		}
 
 	}
-	char buf1[50];
-	char buf[50];
-	int activeSheep = m_herd.GetSheepCount();
-	int deadSheep{ 0 };
-	int timeRemaining{ 0 };
-
-	if(!isPaused) {
-		deadSheep= m_herd.GetDeadSheepCount();
-		timeRemaining = (int)m_countdown.GetElapsedTime().count();
+	else {
+		sprintf(buf, "PAUSE");
+		App::Print(950, 540, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 	}
-	sprintf(buf1, "Time Remaining: %d", timeRemaining);
 
-	sprintf(buf, " Gathered Sheep: %d/%d", deadSheep, activeSheep);
 
+	deadSheep = m_herd.GetDeadSheepCount();
+	timeRemaining = (int)std::chrono::duration_cast<std::chrono::seconds>(m_countdown.GetRemainingTime()).count();
+	sprintf(buf, "Time Remaining: %d", timeRemaining);
 	App::Print(20, 1000, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
-	App::Print(20, 950, buf1, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+	sprintf(buf, " Gathered Sheep: %d/%d", deadSheep, activeSheep);
+	App::Print(20, 950, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+
+
 }
 
 void CGame::Shutdown()
@@ -93,16 +117,55 @@ void CGame::Shutdown()
 
 void CGame::ProcessInputs()
 {
-	if (m_controller.CheckButton(XINPUT_GAMEPAD_START)) {
-		if (isPaused) {
-			isPaused = false;
+	if (m_controller.CheckButton(XINPUT_GAMEPAD_START) && !m_isWin && !m_isOutOfTime) {
+		if (m_isPaused) {
+			m_isPaused = false;
 			m_countdown.Start();
 		}
 		else {
-			isPaused = true;
+			m_isPaused = true;
 			m_countdown.Stop();
-
 		}
+	}
+}
+
+void CGame::LoadNewLevel()
+{
+	m_countdown.Reset();
+	m_countdown.Start();
+	CTileMap::Get().Load();
+	m_herd.ResetSheep();
+}
+
+void CGame::CheckWinCon()
+{
+	m_isWin = m_herd.GetDeadSheepCount() == m_herd.GetSheepCount();
+	m_isOutOfTime = m_countdown.GetRemainingTime() < std::chrono::milliseconds{ 0 };
+}
+
+void CGame::ResetWinCon()
+{
+	m_isWin = false;
+	m_isOutOfTime = false;
+	m_StartNewLevel = false;
+}
+
+void CGame::DisplayEndLevelMessage()
+{
+	char buf[50];
+	int timeUntilNewLevel = (int)std::chrono::duration_cast<std::chrono::seconds>(m_newLevelTimer.GetRemainingTime()).count();
+
+	if (m_isWin) {
+		sprintf(buf, "Victory!");
+		App::Print(950, 540, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+		sprintf(buf, "New Level in %d", timeUntilNewLevel);
+		App::Print(950, 520, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+	}
+	if (m_isOutOfTime) {
+		sprintf(buf, "Out of time!");
+		App::Print(950, 540, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+		sprintf(buf, "New Level in %d", timeUntilNewLevel);
+		App::Print(950, 520, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 	}
 }
 
