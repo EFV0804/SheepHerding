@@ -21,6 +21,7 @@ int WINDOW_WIDTH = APP_INIT_WINDOW_WIDTH;
 int WINDOW_HEIGHT = APP_INIT_WINDOW_HEIGHT;
 HWND MAIN_WINDOW_HANDLE = nullptr;
 
+
 //---------------------------------------------------------------------------------
 static const double UPDATE_MAX = ((1.0 / APP_MAX_FRAME_RATE) * 1000.0);
 //---------------------------------------------------------------------------------
@@ -177,7 +178,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// Setup glut.
 	glutInit(&argc, &argv);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(0, 0);
 	int glutWind = glutCreateWindow(APP_WINDOW_TITLE);
 	HDC dc = wglGetCurrentDC();
 	MAIN_WINDOW_HANDLE = WindowFromDC(dc);

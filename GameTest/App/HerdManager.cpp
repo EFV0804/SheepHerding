@@ -25,7 +25,7 @@ void CHerdManager::MakeHerd(int sheepCount)
 
 	srand(time(0));
 
-	for (int i = 0; i <= m_sheepCount; i++) {
+	for (int i = 0; i < m_sheepCount; i++) {
 
 		float x = 1 + rand() % 900;
 		float y = 1 + rand() % 600;
@@ -57,7 +57,7 @@ void CHerdManager::ComputeDog(float deltaTime)
 void CHerdManager::ComputeSheep(float deltaTime)
 {
 	for (auto sheep : m_herd) {
-		DetectEnclosure(sheep);
+		//DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 
@@ -106,7 +106,7 @@ void CHerdManager::ComputePosition()
 		}
 	}
 
-	m_position = CVec2(x / m_activeSheep, y / m_activeSheep);
+	m_position = CVec2(x / m_herd.size(), y / m_herd.size());
 }
 
 CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
