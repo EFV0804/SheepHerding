@@ -3,7 +3,19 @@
 
 CTileActor::CTileActor(CVec2 position, TileType type, int order): CActor(position, order), m_type(type)
 {
-	m_sprite = new CSpriteComponent(this, 1, ".\\TestData\\tiles.bmp", 3, 1);
+	char* filename = "";
+
+	if (type == 0) {
+		filename = ".\\TestData\\enclosure.bmp";
+	}
+	if (type == 1) {
+		filename = ".\\TestData\\grass.bmp";
+	}
+	if (type == 2) {
+		filename = ".\\TestData\\fence.bmp";
+	}
+
+	m_sprite = new CSpriteComponent(this, 1, filename, 1, 1);
 	m_sprite->GetSprite()->SetFrame(type);
 	if (m_type == 2) {
 		//TODO MAKE SPRITE SIZE STATIC CONST

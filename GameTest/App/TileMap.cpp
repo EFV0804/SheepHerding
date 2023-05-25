@@ -3,36 +3,20 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <random>
 
 void CTileMap::Load()
 {
-	int mapNum = 1+rand() % 2;
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 gen(rd()); // seed the generator
+	std::uniform_int_distribution<> distr(1, 7); // define the range
 
-	char buff[100];
+	int mapNum = distr(gen);
+
+	char buff[21];
 	snprintf(buff, sizeof(buff), ".\\TestData\\map_%d.txt", mapNum);
 	
 	ReadFromFile(buff);
-//
-//	m_tilemap = {
-//		0,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//;		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,0,0,0,0,0,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,0,0,0,0,0,0,0,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,
-//
-//	}
 
 	if (m_tiles.size() > 0) {
 		for (auto tile : m_tiles) {
@@ -46,7 +30,7 @@ void CTileMap::Load()
 		{
 
 			CVec2 position{ 0.0f,0.0f };
-			position.m_y = ((m_rows-1) - row_it) * TILE_SIZE + TILE_SIZE * 0.5;
+			position.m_y = ((m_rows - 1) - row_it) * TILE_SIZE + TILE_SIZE * 0.5;
 			position.m_x = col_it * TILE_SIZE + TILE_SIZE * 0.5;
 
 			TileType type;
@@ -67,7 +51,6 @@ void CTileMap::Load()
 
 			m_tiles.emplace_back(new CTileActor(position, type));
 
-			//CTileActor* tile = new CTileActor(position, type);
 		}
 	}
 }
@@ -76,6 +59,7 @@ void CTileMap::ReadFromFile(const char* filename)
 {
 	std::string line;
 	std::ifstream mapData;
+	//mapData.open(".\\TestData\\map_template.txt");
 	mapData.open(filename);
 
 	for (int row_it = 0; row_it < m_rows; row_it++) {
