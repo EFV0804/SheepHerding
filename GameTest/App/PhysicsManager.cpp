@@ -85,6 +85,70 @@ bool CPhysicsManager::AABBCollision(const CBoundingBoxComponent* a, const CBound
 
 }
 
+bool CPhysicsManager::RaycastIntersects(CVec2 rayPos, CVec2 rayDir, CBoundingBoxComponent* bb)
+{
+
+
+
+	float xmin = bb->GetPosition().m_x;
+	float ymin = bb->GetPosition().m_y;
+	xmin = (xmin - ((bb->GetSize().m_x / 4.0f) * bb->GetScale()));
+	ymin = (ymin - ((bb->GetSize().m_y / 4.0f) * bb->GetScale()));
+	float xmax = (xmin + ((bb->GetSize().m_x / 2.0f) * bb->GetScale()));
+	float ymax = (ymin + ((bb->GetSize().m_y / 2.0f) * bb->GetScale()));
+
+	std::vector<std::array<CVec2,2>> segments;
+	std::array<CVec2, 2> arr{ CVec2{0.0f,0.0f},CVec2{0.f,0.f} };
+
+	CVec2 segment1A{ xmin, ymax };
+	CVec2 segment1B = { xmax, ymax };
+	arr[0] = segment1A;
+	arr[1] = segment1B;
+	segments.push_back(arr);
+
+	CVec2 segment2A{ xmin, ymin };
+	CVec2 segment2B = { xmax, ymin };
+	arr[0] = segment2A;
+	arr[1] = segment2B;
+	segments.push_back(arr);
+
+	CVec2 segment3A{ xmax, ymax };
+	CVec2 segment3B = { xmax, ymin };
+	arr[0] = segment3A;
+	arr[1] = segment3B;
+	segments.push_back(arr);
+
+	CVec2 segment4A{ xmin, ymax };
+	CVec2 segment4B = { xmin, ymin };
+	arr[0] = segment4A;
+	arr[1] = segment4B;
+	segments.push_back(arr);
+
+	float x3 = rayPos.m_x;
+	float y3 = rayPos.m_y;
+	CVec2 norm = CVec2::Normalised(rayDir);
+	float x4 = rayPos.m_x + rayDir.m_x* norm.m_x;
+	float y4 = rayPos.m_y + rayDir.m_y * norm.m_y;
+
+	for (auto segment : segments) {
+		float den = (segment[0].m_x - segment[1].m_x) * (y3 - y4) - (segment[0].m_y - y3) * (x3 - x4);
+
+		if (den == 0) {
+			return false;
+		}
+		float t = (segment[0].m_x - x3) * (y3 - y4) - (segment[0].m_y - y3) * (x3 - x4) / den;
+		float u = -(segment[0].m_x - segment[1].m_x) * (segment[0].m_y - y3) - (segment[0].m_y - segment[1].m_x) * (segment[0].m_x - x3) / den;
+
+		if (t > 0 && t < 1 && u > 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+}
+
 void CPhysicsManager::UpdateActorPosition(CActor* actor, CVec2& force, float deltaTime)
 {
 	int xMin = 0;

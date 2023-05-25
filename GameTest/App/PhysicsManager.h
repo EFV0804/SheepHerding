@@ -25,10 +25,14 @@ public:
 	}
 
 	void Update(float deltaTime);
+
 	CVec2 GetPredictedPosition(CActor* actor, CVec2& force, float deltaTime);
 	void WallCollision(CActor* actor, CVec2& force, float deltaTime);
 	bool AABBCollision(const CBoundingBoxComponent* a, const CBoundingBoxComponent* b);
+	bool RaycastIntersects(CVec2 rayPos, CVec2 rayDir, CBoundingBoxComponent* bb);
+
 	void UpdateActorPosition(CActor* actor, CVec2& translate, float deltaTime);
+
 	void AddBody(CBoundingBoxComponent* bb);
 	void RemoveBody(CBoundingBoxComponent* bb);
 
