@@ -19,7 +19,7 @@ public:
 	void ComputePosition();
 	CVec2 MoveToCenter(CSheepActor * sheep);
 	CVec2 AvoidOthers(CSheepActor* sheep);
-	CVec2 MatchVelocity(CSheepActor* sheep);
+	void MatchVelocity(CSheepActor* sheep);
 	CVec2 Flee(CSheepActor* sheep, CActor* target);
 	void LimitVelocity(CSheepActor* sheep);
 	void RandomiseVelocity(CSheepActor* sheep);

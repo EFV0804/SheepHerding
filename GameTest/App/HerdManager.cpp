@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <algorithm>
+#include <random>
 #include "HerdManager.h"
 #include "PhysicsManager.h"
 #include "TileMap.h"
@@ -10,7 +11,7 @@
 constexpr float centeringFactor{ 0.01f };
 constexpr float avoidanceFactor{0.5f };
 constexpr float cohesionFactor{ 0.1f };
-constexpr int grazingChance{ 5 };
+constexpr float grazingChance{ 0.5f };
 
 CHerdManager::CHerdManager()
 {
@@ -23,17 +24,23 @@ void CHerdManager::MakeHerd(int sheepCount)
 	m_sheepCount = sheepCount;
 	m_activeSheep = m_sheepCount;
 
-	srand(time(0));
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 gen(rd()); // seed the generator
+	std::uniform_int_distribution<> distrX(100, 900); // define the range
+	std::uniform_int_distribution<> distrY(100, 600); // define the range
+
+	////srand(time(0));
 
 	for (int i = 0; i < m_sheepCount; i++) {
 
-		float x = 1 + rand() % 900;
-		float y = 1 + rand() % 600;
+		float x = distrX(gen);
+		float y = distrY(gen);
 		CVec2 randPos{x,y};
 
 		m_herd.push_back(new CSheepActor(randPos));
-		x = rand() % 1;
-		y = rand() % 1;
+		std::uniform_int_distribution<> distrVel(0.2, 1); // define the range
+		x = distrVel(gen);
+		y = distrVel(gen);
 		m_herd.back()->m_velocity = CVec2{x, y};
 	}
 }
@@ -57,11 +64,11 @@ void CHerdManager::ComputeDog(float deltaTime)
 void CHerdManager::ComputeSheep(float deltaTime)
 {
 	for (auto sheep : m_herd) {
-		//DetectEnclosure(sheep);
+		DetectEnclosure(sheep);
 
 		if (sheep->m_isActive) {
 
-			//SetIsGrazing(sheep);
+			
 
 
 			if (!sheep->m_isGrazing) {
@@ -69,16 +76,17 @@ void CHerdManager::ComputeSheep(float deltaTime)
 				sheep->m_velocity += centerVec;
 				CVec2 avoidanceVec = AvoidOthers(sheep);
 				sheep->m_velocity += avoidanceVec;
-				CVec2 velocityVec = MatchVelocity(sheep);
-				sheep->m_velocity += velocityVec;
-
 				CVec2 fleeVec = Flee(sheep, m_dog);
 				sheep->m_velocity += fleeVec;
-
+				//MatchVelocity(sheep);
 			}
 
+			SetIsGrazing(sheep);
+			MatchVelocity(sheep);
+			RandomiseVelocity(sheep);
+
 			LimitVelocity(sheep);
-			//RandomiseVelocity(sheep);
+
 
 			CPhysicsManager::Get().UpdateActorPosition(sheep, sheep->m_velocity, deltaTime);
 
@@ -98,15 +106,16 @@ void CHerdManager::ComputePosition()
 {
 	float x{ 0.0f };
 	float y{ 0.0f };
-
+	int sheepCount = 0;
 	for (auto sheep : m_herd) {
 		if (sheep->m_isActive) {
 			x += sheep->GetPosition().m_x;
 			y += sheep->GetPosition().m_y;
+			sheepCount++;
 		}
 	}
 
-	m_position = CVec2(x / m_herd.size(), y / m_herd.size());
+	m_position = CVec2(x / sheepCount, y / sheepCount);
 }
 
 CVec2 CHerdManager::MoveToCenter(CSheepActor* sheep)
@@ -173,9 +182,9 @@ CVec2 CHerdManager::AvoidOthers(CSheepActor* sheep)
 
 }
 
-CVec2 CHerdManager::MatchVelocity(CSheepActor* sheep)
+void CHerdManager::MatchVelocity(CSheepActor* sheep)
 {
-	CVec2 velocity{ 0.0f,0.0f };
+	/*CVec2 velocity{ 0.0f,0.0f };*/
 	//int count{ 0 };
 
 	//for (auto otherSheep : m_herd) {
@@ -200,9 +209,6 @@ CVec2 CHerdManager::MatchVelocity(CSheepActor* sheep)
 	}
 	sheep->GetSprite()->GetSprite()->SetAngle(angle);
 
-	//END
-
-	return velocity;
 
 }
 
@@ -232,11 +238,15 @@ void CHerdManager::LimitVelocity(CSheepActor* sheep)
 
 void CHerdManager::RandomiseVelocity(CSheepActor* sheep)
 {
-	float x = (0 + rand() % 1);
-	float y = (0 + rand() % 1);
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 gen(rd()); // seed the generator
+	std::uniform_int_distribution<> distrVel(0, 0.7); // define the range
+
+	float x = distrVel(gen);
+	float y = distrVel(gen);
 	CVec2 dir{ x, y };
 	//dir.Normalised();
-	sheep->m_velocity += dir * 1.11;
+	sheep->m_velocity += dir /** 1.11*/;
 }
 
 void CHerdManager::SetIsGrazing(CSheepActor* sheep)
@@ -254,15 +264,27 @@ void CHerdManager::SetIsGrazing(CSheepActor* sheep)
 	}
 	else {
 		if (sheep->CanGraze()) {
-			int isGrazing = rand() % 1000;
+
+			std::random_device rd; // obtain a random number from hardware
+			std::mt19937 gen(rd()); // seed the generator
+			std::uniform_int_distribution<> distrGraze(0, 1500); // define the range
+
+			int isGrazing = distrGraze(gen);
+
 			if (isGrazing < grazingChance) {
 				sheep->m_startGrazeTime = std::chrono::steady_clock::now();
 				sheep->m_isGrazing = true;
-				//TODO MOVE AWAY FROM HERD
-				sheep->m_velocity *= 0.0f;
 
+				CVec2 vecToHerd = m_position - sheep->GetPosition();
+				vecToHerd.m_x = vecToHerd.m_x * -1;
+				vecToHerd.m_y = vecToHerd.m_y * -1;
+				vecToHerd.Normalised();
+
+				//TODO MOVE AWAY FROM HERD
+				sheep->m_velocity += vecToHerd*0.15;
+				
 				//DEBUG
-				sheep->GetSprite()->GetSprite()->SetFrame(1);
+				//sheep->GetSprite()->GetSprite()->SetFrame(1);
 			}
 			else {
 				sheep->m_isGrazing = false;
@@ -288,16 +310,18 @@ void CHerdManager::ResetSheep()
 		sheep->m_isActive = true;
 		m_activeSheep = m_sheepCount;
 		sheep->GetSprite()->GetSprite()->SetFrame(0);
+
+		//int type{ 0 };
+		//CVec2 newPos{0.0f,0.0f};
+
+		//do {
+		//	type = CTileMap::Get().GetTileType(sheep->GetPosition());
+		//	newPos = { float(1 + rand() % 900), float(1+rand() % 600) };
+		//} while (type == 0);
+
+		//sheep->SetPosition(newPos);
 	}
-	//RESET POSITION
-	// int type{0};
-	// while do(type == 0){
-	// 	type = CTileMap::Get().GetTileType(sheep->GetPosition());
-	// 
-		//CVec2 newPos{ rand % 900, rand % 600 };
-	// }
-	// 
-	// sheep.SetPosition(newPos);
+
 	
 }
 
