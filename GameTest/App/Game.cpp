@@ -56,9 +56,11 @@ void CGame::Update(float deltaTime)
 			for (auto actor : m_actors) {
 				actor->Update(deltaTime);
 			}
+			m_herd.Update(deltaTime);
 		}
+
 	}
-	m_herd.Update(deltaTime);
+
 }
 
 void CGame::Render()
