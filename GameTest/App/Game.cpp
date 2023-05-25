@@ -20,7 +20,7 @@ void CGame::Init()
 void CGame::PreUpdate(float deltaTime)
 {
 	if (!m_isPaused && !m_isWin || !m_isOutOfTime) {
-		m_herd.Update(deltaTime);
+		
 		CPhysicsManager::Get().Update(deltaTime);
 	}
 }
@@ -28,6 +28,7 @@ void CGame::PreUpdate(float deltaTime)
 void CGame::Update(float deltaTime)
 {
 	ProcessInputs();
+
 
 	if (!m_isPaused) {
 
@@ -57,6 +58,7 @@ void CGame::Update(float deltaTime)
 			}
 		}
 	}
+	m_herd.Update(deltaTime);
 }
 
 void CGame::Render()
@@ -160,6 +162,8 @@ void CGame::DisplayInGameUI()
 	App::Print(20, 1000, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 	sprintf(buf, " Gathered Sheep: %d/%d", deadSheep, activeSheep);
 	App::Print(20, 950, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
+	sprintf(buf, " Bark with A");
+	App::Print(800, 50, buf, 1.0f, 1.0f, 1.0f, GLUT_BITMAP_HELVETICA_18);
 }
 
 void CGame::AddActor(CActor* actor)
