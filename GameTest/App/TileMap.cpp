@@ -7,6 +7,12 @@
 
 void CTileMap::Load()
 {
+	if (m_tiles.size() > 0) {
+		m_tiles.clear();
+		m_grassTiles.clear();
+		m_enclosureTiles.clear();
+	}
+
 	std::random_device rd; // obtain a random number from hardware
 	std::mt19937 gen(rd()); // seed the generator
 	std::uniform_int_distribution<> distr(1, 7); // define the range
@@ -38,21 +44,43 @@ void CTileMap::Load()
 			switch (m_tilemap[row_it * m_cols + col_it]) {
 				default:
 					type = TileType::Grass;
+					m_tiles.emplace_back(new CTileActor(position, type));
+					//m_grassTiles.push_back(m_tiles.back());
 				case 0:
 					type = TileType::Mud;
+					m_tiles.emplace_back(new CTileActor(position, type));
+					m_enclosureTiles.push_back(m_tiles.back());
 					break;
 				case 1:
 					type = TileType::Grass;
+					m_tiles.emplace_back(new CTileActor(position, type));
+					//m_grassTiles.push_back(m_tiles.back());
+
 					break;
 				case 2:
 					type = TileType::Fence;
+					m_tiles.emplace_back(new CTileActor(position, type));
+					m_enclosureTiles.push_back(m_tiles.back());
 					break;
 			}
 
-			m_tiles.emplace_back(new CTileActor(position, type));
+
 
 		}
 	}
+	int x = 0;
+	//Get elligible grass tile for sheep p
+	for (auto tile : m_tiles) {
+		if (tile->GetType() == 1
+			&& tile->GetPosition().m_y < 800
+			&& tile->GetPosition().m_y > 100
+			&& tile->GetPosition().m_x < 800
+			&& tile->GetPosition().m_x > 100) {
+
+			m_grassTiles.push_back(tile);
+		}
+	}
+	ComputeAverageEnclosurePosition();
 }
 
 void CTileMap::ReadFromFile(const char* filename)
@@ -68,8 +96,18 @@ void CTileMap::ReadFromFile(const char* filename)
 			m_tilemap[row_it * m_cols + col_it] = std::stoi(line);
 		}
 	}
+}
 
+void CTileMap::ComputeAverageEnclosurePosition()
+{
 
+	for (auto tile : m_enclosureTiles) {
+		m_averageEnclosurePos.m_x += tile->GetPosition().m_x;
+		m_averageEnclosurePos.m_y += tile->GetPosition().m_y;
+	}
+
+	m_averageEnclosurePos.m_x = m_averageEnclosurePos.m_x / m_enclosureTiles.size();
+	m_averageEnclosurePos.m_y = m_averageEnclosurePos.m_y / m_enclosureTiles.size();
 
 }
 
