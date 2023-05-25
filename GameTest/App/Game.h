@@ -43,8 +43,8 @@ private:
 	std::vector<CActor*> m_actors;
 	CHerdManager m_herd;
 	CCustomTimer m_timer{};
-	std::chrono::milliseconds m_levelTime{60000 };
-	std::chrono::milliseconds m_timeBeforeNewLevel{ 5000 };
+	std::chrono::milliseconds m_levelTime{20000};
+	std::chrono::milliseconds m_timeBeforeNewLevel{ 4000 };
 	CCustomTimer m_countdown{true, m_levelTime };
 	CCustomTimer m_newLevelTimer{true, m_timeBeforeNewLevel };
 };

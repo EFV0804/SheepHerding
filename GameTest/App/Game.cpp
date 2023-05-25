@@ -11,7 +11,7 @@
 void CGame::Init()
 {
 	CTileMap::Get().Load();
-	m_herd.MakeHerd(20);
+	m_herd.MakeHerd(40);
 	CPlayerActor* player = new CPlayerActor(CVec2(500.0f, 400.0f));
 	m_herd.SetDog(player);
 	m_countdown.Start();
