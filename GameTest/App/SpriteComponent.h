@@ -22,6 +22,7 @@ public:
 
     CSimpleSprite* GetSprite() { return m_sprite; }
     void SetPosition(CVec2 position) { m_position = position; }
+    void SetScale(float scale) { m_sprite->SetScale(scale); }
 
     enum
     {
