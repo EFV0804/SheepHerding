@@ -6,4 +6,5 @@ The sheep herding machanic was mostly an excuse to learn and implement boids beh
 ## Credit
  Adrien, my brother, for the name of the game.
 
+## Screenshot
 ![](https://raw.githubusercontent.com/EFV0804/SheepHerding/main/screen_shot.PNG)
